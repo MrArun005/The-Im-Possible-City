@@ -424,7 +424,11 @@ export function buildNycDoorBuilding(spec, { facing, rng }) {
       script: spec.neon.script,
     });
     const mat = new THREE.MeshBasicMaterial({
-      map: tex, transparent: true, blending: THREE.AdditiveBlending,
+      map: tex,
+      // Below white on purpose: additive over an already-lit brick wall
+      // saturates instantly, and a sign you cannot read is not a sign.
+      color: 0xb4b4b4,
+      transparent: true, blending: THREE.AdditiveBlending,
       depthWrite: false, toneMapped: false, side: THREE.DoubleSide,
     });
     const sign = new THREE.Mesh(

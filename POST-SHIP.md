@@ -30,6 +30,11 @@ instead of into the build. Nothing on this list is a defect.
 - [ ] Screen-space reflections on the NYC asphalt, if a way is found that does
       not cost more than the rest of the district. The baked cubemap is good
       enough that this is a want, not a need.
+- [ ] Sharper baked cubemap rooms. They work and they are parallax-correct, but
+      a bake is a photograph of a room and comes back flatter than the room was.
+      The shader grades contrast and saturation back to compensate; a proper
+      second bake pass (a brighter key, a real bounce) would do better than a
+      grade can. Doors on the `cubemap` rung are the softest thing in the city.
 - [ ] Hand-authored camera rails per district for the milestone clips, separate
       from the intro dolly.
 

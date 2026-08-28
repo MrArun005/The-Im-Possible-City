@@ -112,7 +112,9 @@ function doorLots(rooms) {
           type: 'cubemap',
           recipe: rooms.pawnshop,
           size: rooms.pawnshop.size,
-          exposure: 1.05,
+          exposure: 1.15,
+          contrast: 1.5,
+          saturation: 0.95,
           flicker: 0.35,
         },
       }],
@@ -216,11 +218,14 @@ export function londonDistrict() {
     seed: 1891,
     hour: 21.5,
     rain: 0.35,
+    // Sky IBL fill. Enough that no facade is ever a black slab, low enough
+    // that the gaslights and the lit windows still carry the night.
+    envIntensity: 0.3,
     fadeColor: '#05070c',
 
     /** §3.2 grade block: fog, tonemap, bloom, ambient colour. */
     grade: {
-      exposure: 1.38,
+      exposure: 1.2,
       bloomStrength: 0.82,
       bloomRadius: 0.62,
       bloomThreshold: 0.72,
@@ -233,19 +238,19 @@ export function londonDistrict() {
       // brown-grey, not a black void. Density is the one number to reach for
       // when the city looks janky (see the risk register) - but past ~0.035 it
       // stops being atmosphere and starts being a wall.
-      fog: '#4a3b2a',
+      fog: '#3e352c',
       fogNight: 0.019,
       fogDay: 0.013,
       sunTint: '#ffc79a',
       skyTint: '#141a26',
       horizonTint: '#6a4c30',
-      ambientColor: '#8a7458',
+      ambientColor: '#6a5a48',
       tintStrength: 0.6,
       // Moon low in the south-east, raking along the high street and across
       // the north row of door facades.
       lightAzimuth: 0.95,
-      sunScale: 1.25,
-      ambientScale: 1.5,
+      sunScale: 1.1,
+      ambientScale: 0.95,
     },
 
     // A real recording, if one is ever dropped in; synthesised otherwise.

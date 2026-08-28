@@ -104,7 +104,9 @@ function doorLots(rooms) {
           type: 'cubemap',
           recipe: rooms.diner,
           size: rooms.diner.size,
-          exposure: 1.1,
+          exposure: 1.2,
+          contrast: 1.45,
+          saturation: 1.1,
           tint: 0xffffff,
         },
       }],
@@ -194,13 +196,15 @@ export function nycDistrict() {
     seed: 1977,
     hour: 2,
     rain: 0.55,
+    // New York's sky glow is brighter than London's fog, so it fills more.
+    envIntensity: 0.45,
     fadeColor: '#04060a',
     skyRadius: 165,
 
     /** §5.6 NYC grade: cooler tonemap, higher bloom, light haze not fog. */
     grade: {
-      exposure: 1.26,
-      bloomStrength: 1.35,
+      exposure: 1.14,
+      bloomStrength: 1.0,
       bloomRadius: 0.72,
       bloomThreshold: 0.7,
       saturation: 1.08,
@@ -215,12 +219,12 @@ export function nycDistrict() {
       sunTint: '#8fa8ff',
       skyTint: '#080f20',
       horizonTint: '#46608e',
-      ambientColor: '#6e82b4',
+      ambientColor: '#54689a',
       tintStrength: 0.65,
       // Sky-glow from the south-west, down the avenue.
       lightAzimuth: 2.15,
-      sunScale: 1.0,
-      ambientScale: 1.6,
+      sunScale: 0.9,
+      ambientScale: 1.05,
     },
 
     audio: '/districts/nyc/ambience.mp3',

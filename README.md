@@ -70,6 +70,10 @@ Touch: left thumb-stick walks, drag anywhere to look, the round button opens.
 | `?decoders=local` | load DRACO/KTX2 from `/vendor` instead of the CDN |
 | `?splatdebug=1` | print a splat's live transform for calibration |
 
+Console: `city.districts.goTo('nyc')`, `city.snapDoor('baker-street-221b')` —
+open or shut a door with no tween, for screenshots and end-to-end tests where
+waiting on an animation is a source of silently-wrong captures.
+
 ---
 
 ## Architecture
@@ -136,6 +140,32 @@ variant system, door component, crowd, traffic, weather and post chain
 verbatim; what differs is assets and a grade. That is the whole promise of the
 district architecture, and it is checkable: `src/districts/*/index.js` are pure
 data plus one `decorate()` hook each.
+
+### Three lights, and the fourth that isn't a light
+
+The budget is three real-time lights, total: a hemisphere for sky/ground
+ambient, one directional that is the sun by day and the moon by night, and a
+third that the single nearest interior *borrows* — an unfocused room's
+practicals sit at zero intensity and cost nothing.
+
+That leaves a real problem: one directional light can only ever light one side
+of a street, and the facades facing away from it go black. Two answers, both in
+the code:
+
+- **Azimuth is art-directed, elevation is not.** Elevation follows the clock, so
+  dawn and dusk read correctly; the compass bearing is pinned per district
+  (`grade.lightAzimuth`) to rake the light along the street and across the
+  facades that matter. Derived purely from the hour, the moon lands behind the
+  door row at half past nine and every hero door renders as an unlit slab —
+  physically honest, and a badly lit city.
+- **Ambient comes from the sky, not from a light.** The sky dome is prefiltered
+  into a small PMREM cube and assigned to `scene.environment`, so every
+  standard material in the city picks up directionally-correct fill for free. No
+  light slot, one small texture, regenerated only when the sky moves.
+
+Interior practicals also sit on their own render layer, enabled only on that
+interior's own meshes — otherwise a lamp in a study lights the pavement three
+metres away through solid brick, since none of these lights cast shadows.
 
 ### The living windows
 

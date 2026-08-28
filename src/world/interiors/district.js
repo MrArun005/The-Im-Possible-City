@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import * as T from '../../gfx/textures.js';
 import { livingWindowMaterial, seedWindowAttributes } from '../../gfx/materials.js';
-import { buildInstanced } from '../../gfx/instancing.js';
+import { buildInstanced, GeometryBuilder } from '../../gfx/instancing.js';
 import { makeRng } from '../../util/rng.js';
 import { Steam } from '../../fx/particles.js';
 import { disposeSubtree } from '../../util/dispose.js';
@@ -37,39 +37,72 @@ export class DistrictPortalInterior {
     const rng = makeRng(spec.seed ?? 1977);
     const preview = spec.preview ?? {};
 
-    // ---- the tunnel you look down ------------------------------------
-    // A short dark throat between the door and the vista sells the depth.
-    const throatDepth = preview.throat ?? 3.2;
-    const throatGeo = new THREE.BoxGeometry(2.0, 2.5, throatDepth);
-    throatGeo.translate(0, 1.25, -throatDepth / 2);
+    /**
+     * ---- the tunnel you look down ------------------------------------
+     *
+     * SHORT, and the vista sits CLOSE behind it. The first version had a 3.2m
+     * throat and the skyline 10m further back: through a 1.6m doorway from
+     * three metres away that is a pinhole, and New York was a faint blue smudge
+     * at the end of a dark corridor. Step 8.2 asks for a teaser, and a teaser
+     * has to be legible - everything here is packed into the view cone the
+     * doorway actually gives you.
+     */
+    const throatDepth = preview.throat ?? 2.0;
+    const throatW = 2.0;
+    const throatH = 2.5;
+    const t = 0.12;
+
+    /**
+     * An OPEN-ENDED tunnel - four slabs, no end cap.
+     *
+     * A BackSide box looks like a tunnel from inside but it has a far face, and
+     * that face is exactly where the other city is supposed to be. Five minutes
+     * of confusion and one screenshot of a beautifully lit dead end.
+     */
+    const tb = new GeometryBuilder();
+    tb.box('throat', [throatW + t * 2, t, throatDepth], [0, -t / 2, -throatDepth / 2],
+      { uvScale: [1, throatDepth / 2] });
+    tb.box('throat', [throatW + t * 2, t, throatDepth], [0, throatH + t / 2, -throatDepth / 2],
+      { uvScale: [1, throatDepth / 2] });
+    tb.box('throat', [t, throatH, throatDepth], [-throatW / 2 - t / 2, throatH / 2, -throatDepth / 2],
+      { uvScale: [throatDepth / 2, 1] });
+    tb.box('throat', [t, throatH, throatDepth], [throatW / 2 + t / 2, throatH / 2, -throatDepth / 2],
+      { uvScale: [throatDepth / 2, 1] });
+
     const throatMat = new THREE.MeshStandardMaterial({
       map: T.stone(0),
-      color: 0x4a4a52,
+      color: 0x6e727c,
       roughness: 0.9,
-      side: THREE.BackSide,
+      // Tiled subway walls under a strip light: the descent has to read, and an
+      // interior with no lights of its own needs the emissive to do it.
+      emissive: new THREE.Color(preview.throatGlow ?? '#2e3a4c').multiplyScalar(0.5),
     });
-    const throat = new THREE.Mesh(throatGeo, throatMat);
+    const throat = new THREE.Mesh(tb.build().throat, throatMat);
+    throat.name = 'portal-throat';
     this.root.add(throat);
     this._built.push(throatMat);
 
     // Tiled stair treads going down, so the subway entrance reads as a descent.
-    const stepMat = new THREE.MeshStandardMaterial({ color: 0x2a2a30, roughness: 0.85 });
+    const stepMat = new THREE.MeshStandardMaterial({
+      color: 0x6a6a74, roughness: 0.85,
+      emissive: new THREE.Color('#3a4658').multiplyScalar(0.3),
+    });
     const steps = [];
-    for (let i = 0; i < 7; i++) {
-      steps.push({ position: [0, -i * 0.16, -0.5 - i * 0.34], scale: [1.9, 0.16, 0.34] });
+    for (let i = 0; i < 5; i++) {
+      steps.push({ position: [0, -i * 0.13, -0.45 - i * 0.3], scale: [1.9, 0.13, 0.3] });
     }
     const stepMesh = buildInstanced(new THREE.BoxGeometry(1, 1, 1), stepMat, steps);
     this.root.add(stepMesh);
     this._built.push(stepMat);
 
     // ---- the vista --------------------------------------------------
-    const vistaZ = -throatDepth - (preview.distance ?? 7);
+    const vistaZ = -throatDepth - (preview.distance ?? 2.5);
     const skyTex = T.skyGradient(preview.sky ?? [
       [0, '#04070f'], [0.45, '#101a2e'], [0.78, '#2a3550'], [1, '#4a3a44'],
     ]);
     const skyMat = new THREE.MeshBasicMaterial({ map: skyTex, toneMapped: false });
-    const sky = new THREE.Mesh(new THREE.PlaneGeometry(64, 34), skyMat);
-    sky.position.set(0, 12, vistaZ - 14);
+    const sky = new THREE.Mesh(new THREE.PlaneGeometry(52, 30), skyMat);
+    sky.position.set(0, 9, vistaZ - 11);
     this.root.add(sky);
     this._built.push(skyMat, skyTex);
 
@@ -77,9 +110,11 @@ export class DistrictPortalInterior {
     const towerGeo = new THREE.BoxGeometry(1, 1, 1);
     const towerMat = new THREE.MeshStandardMaterial({ color: 0x0d1018, roughness: 0.94 });
     const towerPlacements = (preview.towers ?? [
-      { position: [-7.5, 0, vistaZ - 2], scale: [5.5, 24, 5.5] },
-      { position: [7.0, 0, vistaZ - 5], scale: [6.5, 32, 6.0] },
-      { position: [0.5, 0, vistaZ - 10], scale: [8.0, 40, 7.0] },
+      // Offset so you see BETWEEN them - a single slab filling the doorway is
+      // a wall with windows on it, not a city.
+      { position: [-4.2, 0, vistaZ - 0.5], scale: [3.6, 15, 3.6] },
+      { position: [4.6, 0, vistaZ - 2.5], scale: [4.4, 19, 4.4] },
+      { position: [-0.6, 0, vistaZ - 7.0], scale: [5.6, 25, 5.6] },
     ]).map((t) => ({
       ...t,
       position: [t.position[0], t.scale[1] / 2, t.position[2]],
@@ -95,8 +130,8 @@ export class DistrictPortalInterior {
     const windows = [];
     for (const tower of towerPlacements) {
       const [tw, th] = [tower.scale[0], tower.scale[1]];
-      const cols = Math.max(2, Math.floor(tw / 1.1));
-      const rows = Math.max(4, Math.floor(th / 1.5));
+      const cols = Math.max(2, Math.floor(tw / 1.0));
+      const rows = Math.max(4, Math.floor(th / 1.35));
       for (let c = 0; c < cols; c++) {
         for (let r = 1; r < rows; r++) {
           windows.push({
@@ -111,7 +146,9 @@ export class DistrictPortalInterior {
       }
     }
     const windowMesh = buildInstanced(winGeo, winMat, windows);
-    seedWindowAttributes(windowMesh, rng, { litChance: 0.5, maxGlow: 1.5 });
+    // Nearly every window lit, and hot: this is a glimpse of another city
+    // seen for two seconds through a doorway, not a place you will study.
+    seedWindowAttributes(windowMesh, rng, { litChance: 0.88, maxGlow: 2.8 });
     this.root.add(windowMesh);
 
     // A neon sign, because you should be able to read the other world's name.
@@ -123,9 +160,9 @@ export class DistrictPortalInterior {
         map: neonTex, transparent: true, blending: THREE.AdditiveBlending,
         depthWrite: false, toneMapped: false,
       });
-      const neon = new THREE.Mesh(new THREE.PlaneGeometry(5.4, 2.7), neonMat);
-      neon.position.set(-4.6, 6.4, vistaZ + 0.6);
-      neon.rotation.y = 0.24;
+      const neon = new THREE.Mesh(new THREE.PlaneGeometry(3.8, 1.9), neonMat);
+      neon.position.set(-2.9, 3.6, vistaZ + 0.4);
+      neon.rotation.y = 0.3;
       this.root.add(neon);
       this._built.push(neonMat);
       this.neon = neon;
@@ -133,7 +170,8 @@ export class DistrictPortalInterior {
 
     // Ground and haze: a wet street catching all that light.
     const groundMat = new THREE.MeshStandardMaterial({
-      color: 0x0a0c11, roughness: 0.12, metalness: 0.4,
+      color: 0x2a3038, roughness: 0.12, metalness: 0.4,
+      emissive: new THREE.Color(preview.hazeColor ?? '#2b3a58').multiplyScalar(0.1),
     });
     const ground = new THREE.Mesh(new THREE.PlaneGeometry(70, 46), groundMat);
     ground.rotation.x = -Math.PI / 2;
@@ -145,19 +183,21 @@ export class DistrictPortalInterior {
 
     const hazeMat = new THREE.MeshBasicMaterial({
       color: new THREE.Color(preview.hazeColor ?? '#2b3a58'),
-      map: T.softDot(), transparent: true, opacity: 0.5,
+      map: T.softDot(), transparent: true, opacity: 0.28,
       blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false,
     });
-    const haze = new THREE.Mesh(new THREE.PlaneGeometry(56, 22), hazeMat);
-    haze.position.set(0, 4, vistaZ - 3);
+    // Behind the near towers, not in front of them: a big bright additive quad
+    // between you and the city reads as a wall, not as air.
+    const haze = new THREE.Mesh(new THREE.PlaneGeometry(24, 10), hazeMat);
+    haze.position.set(0, 2.6, vistaZ - 5.5);
     this.root.add(haze);
     this._built.push(hazeMat);
 
     if (this.ctx.quality.steamPuffs > 0) {
       this._steam = new Steam({
-        sources: [[-2.2, -0.2, vistaZ + 2], [3.4, -0.2, vistaZ - 1]],
+        sources: [[-1.8, -0.2, vistaZ + 1.2], [2.4, -0.2, vistaZ - 0.6]],
         perSource: Math.max(8, Math.round(this.ctx.quality.steamPuffs / 6)),
-        height: 7,
+        height: 5,
         color: '#9fb0c4',
         size: 1.2,
         opacity: 0.3,

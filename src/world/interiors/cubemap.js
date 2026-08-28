@@ -53,6 +53,8 @@ export class CubemapInterior {
         uExposure: { value: spec.exposure ?? 1 },
         uTint: { value: new THREE.Color(spec.tint ?? 0xffffff) },
         uFlicker: { value: spec.flicker ?? 0 },
+        uContrast: { value: spec.contrast ?? 1.35 },
+        uSaturation: { value: spec.saturation ?? 1.15 },
         uTime: { value: 0 },
       },
       vertexShader: /* glsl */ `
@@ -68,12 +70,26 @@ export class CubemapInterior {
         uniform float uExposure;
         uniform vec3  uTint;
         uniform float uFlicker;
+        uniform float uContrast;
+        uniform float uSaturation;
         uniform float uTime;
         varying vec3 vLocal;
 
         void main() {
           vec3 dir = normalize(vLocal - uCentre);
           vec3 col = textureCube(uCube, dir).rgb * uExposure * uTint;
+
+          /**
+           * A bake is a photograph of a room, and like any photograph it comes
+           * back flatter than the room was: one ambient pass, no local contrast,
+           * everything pushed toward the mean. Grading it back here costs
+           * nothing and is the difference between "a lit room behind the door"
+           * and "an orange smear behind the door".
+           */
+          float luma = dot(col, vec3(0.2126, 0.7152, 0.0722));
+          col = mix(vec3(luma), col, uSaturation);
+          col = max((col - 0.18) * uContrast + 0.14, vec3(0.0));
+
           // A cubemap room is frozen. One flicker uniform buys it a heartbeat.
           col *= 1.0 + uFlicker * 0.12 * sin(uTime * 7.4) * sin(uTime * 2.3);
           gl_FragColor = vec4(col, 1.0);

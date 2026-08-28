@@ -48,6 +48,8 @@ export class District {
       radius: cfg.skyRadius ?? 150,
     });
     this.root.add(this.sky.mesh);
+    // Ambient fill for every facade, whichever way it faces (see SkyDome).
+    this.sky.attachEnvironment(this.ctx.renderer, this.ctx.scene, cfg.envIntensity ?? 1.0);
 
     step('Fitting the doors');
     this.doors = new DoorManager({ ...this.ctx, district: this });
@@ -255,7 +257,7 @@ export class District {
     if (!this.active) return;
     this._time += dt;
 
-    this.sky?.update(this.ctx.camera);
+    this.sky?.update(this.ctx.camera, dt);
     this.doors?.update(dt, playerPos);
     this.crowd?.update(dt, this.ctx);
     this.traffic?.update(dt);

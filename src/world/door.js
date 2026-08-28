@@ -389,6 +389,17 @@ export class Door {
 
   close() { if (this.open) this.toggle(); }
 
+  /** Shut with no animation - for streaming eviction and district teardown. */
+  snapShut() {
+    gsap.killTweensOf(this.hinge.rotation);
+    gsap.killTweensOf(this.spill);
+    this.open = false;
+    this.busy = false;
+    this.hinge.rotation.y = 0;
+    this.spill.target = 0;
+    this.interior?.deactivate?.();
+  }
+
   isOpen() { return this.open; }
 
   // --------------------------------------------------------------- interior

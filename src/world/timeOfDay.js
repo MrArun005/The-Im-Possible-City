@@ -240,9 +240,12 @@ export class SkyDome {
     this.mesh.name = 'sky';
     this.mesh.frustumCulled = false;
     this.mesh.renderOrder = -100;
+    this._envAge = 0;
+    this._envSnapshot = null;
+    this._envIntensity = 1;
   }
 
-  update(camera) {
+  update(camera, dt = 0) {
     if (camera) this.mesh.position.copy(camera.position);
     const s = this.timeOfDay.state;
     const u = this.material.uniforms;
@@ -250,11 +253,70 @@ export class SkyDome {
     u.uHorizon.value.copy(s.skyHorizon);
     u.uBottom.value.copy(s.fogColor);
     u.uStarStrength.value = Math.max(0, s.night - 0.45) * 1.4;
+
+    this._envAge += dt;
+    if (this._envAge > 1.5 && this._envDirty()) this.refreshEnvironment();
+  }
+
+  /**
+   * Image-based ambient from the sky itself.
+   *
+   * ONE directional light can only ever light one side of a street; the facades
+   * facing away from it fall to whatever the hemisphere fill gives them, which
+   * is not much, and half the city renders as black slabs. The budget allows no
+   * more lights (§3.4: three, total), so the fill comes from an environment map
+   * instead: the sky dome is prefiltered into a small PMREM cube and assigned to
+   * `scene.environment`, and every standard material in the city picks up
+   * directionally-correct ambient for free. No light slots, one small texture.
+   *
+   * It is regenerated on a 1.5s throttle, and only when the sky has actually
+   * moved, so a day/night sweep costs a handful of prefilter passes rather than
+   * one per frame.
+   */
+  refreshEnvironment() {
+    const { renderer, scene } = this._envCtx ?? {};
+    if (!renderer || !scene) return;
+
+    this._pmrem = this._pmrem ?? new THREE.PMREMGenerator(renderer);
+    const skyScene = new THREE.Scene();
+    // A copy of the dome, small and centred: the prefilter only needs direction.
+    const probe = new THREE.Mesh(new THREE.SphereGeometry(10, 16, 12), this.material);
+    skyScene.add(probe);
+
+    const previous = this._envTarget;
+    this._envTarget = this._pmrem.fromScene(skyScene, 0, 0.5, 40);
+    scene.environment = this._envTarget.texture;
+    scene.environmentIntensity = this._envIntensity;
+
+    probe.geometry.dispose();
+    previous?.dispose();
+    this._envAge = 0;
+    this._envSnapshot = this._skySignature();
+  }
+
+  /** Call once, after the dome is in the scene. */
+  attachEnvironment(renderer, scene, intensity = 1) {
+    this._envCtx = { renderer, scene };
+    this._envIntensity = intensity;
+    this._envAge = 0;
+    this.refreshEnvironment();
+  }
+
+  _skySignature() {
+    const s = this.timeOfDay.state;
+    return s.skyTop.getHex() * 3 + s.skyHorizon.getHex() * 5 + s.fogColor.getHex() * 7;
+  }
+
+  _envDirty() {
+    return this._skySignature() !== this._envSnapshot;
   }
 
   dispose() {
     this.mesh.geometry.dispose();
     this.material.dispose();
     this.mesh.parent?.remove(this.mesh);
+    this._envTarget?.dispose();
+    this._pmrem?.dispose();
+    if (this._envCtx?.scene) this._envCtx.scene.environment = null;
   }
 }

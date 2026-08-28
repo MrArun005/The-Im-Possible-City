@@ -119,7 +119,10 @@ export class DoorManager {
         nearestDist = dist;
       }
 
-      if (dist > (door.cfg.disposeRadius ?? 20) && door.interior && !door.open) {
+      if (dist > (door.cfg.disposeRadius ?? 20) && door.interior) {
+        // Open or not: a room 20m behind you is not a room you are looking at,
+        // and "it was left open" is not a reason to keep it resident.
+        if (door.open) door.snapShut();
         door.unloadInterior();
       }
 
@@ -162,11 +165,16 @@ export class DoorManager {
      */
     const alive = loaded.filter((d) => d.interior);
     if (alive.length > budget) {
-      alive
-        .filter((d) => !d.open)
-        .sort((a, b) => b._dist - a._dist)
-        .slice(0, alive.length - budget)
-        .forEach((d) => d.unloadInterior());
+      // Closed rooms go first; if that is not enough, the furthest open ones
+      // are shut and evicted too. The cap wins over the door state.
+      const ordered = [
+        ...alive.filter((d) => !d.open).sort((a, b) => b._dist - a._dist),
+        ...alive.filter((d) => d.open).sort((a, b) => b._dist - a._dist),
+      ];
+      ordered.slice(0, alive.length - budget).forEach((d) => {
+        if (d.open) d.snapShut();
+        d.unloadInterior();
+      });
     }
 
     // Focus exactly one interior, so lights stay inside budget.

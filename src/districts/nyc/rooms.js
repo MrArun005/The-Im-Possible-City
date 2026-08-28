@@ -102,16 +102,17 @@ export const portalBack = {
   id: 'the-crossing-back',
   target: 'london',
   preview: {
-    throat: 3.0,
-    distance: 6,
+    throat: 2.0,
+    distance: 2.2,
     neon: false,
     hazeColor: '#3a2a1e',
     sky: [[0, '#0a0c12'], [0.45, '#1a1712'], [0.8, '#3a2a1c'], [1, '#5a3f28']],
     // London through a New York doorway: gaslight and brick, not neon.
+    // London through a New York doorway: lower, closer, brick not steel.
     towers: [
-      { position: [-6.5, 0, -12], scale: [7.0, 13, 6.0] },
-      { position: [6.0, 0, -14], scale: [7.5, 15, 6.5] },
-      { position: [0.0, 0, -19], scale: [9.0, 12, 7.0] },
+      { position: [-4.8, 0, -6.5], scale: [5.0, 9, 5.0] },
+      { position: [4.6, 0, -8.0], scale: [5.4, 11, 5.4] },
+      { position: [0.0, 0, -12.0], scale: [7.0, 8, 6.0] },
     ],
   },
 };

@@ -18,6 +18,7 @@ places rather than written down once and forgotten:
 | Loaded interiors | ≤ 3 | `DoorManager._stream()` preloads the nearest and evicts the furthest closed door |
 | Video decoding | 1 at a time | a module-level registry in `interiors/video.js`; whoever plays last wins and everyone else is paused |
 | Real-time lights | ≤ 3 | hemisphere + one directional sun/moon, forever. The third is *borrowed*: only the single nearest interior is "focused", and only a focused interior raises its practical lights above zero. |
+| Ambient fill | 0 extra lights | one directional light can only light one side of a street, and the budget has no room for a second. The fill instead comes from `scene.environment`: the sky dome is prefiltered into a small PMREM cube and every standard material picks up directionally-correct ambient from it. Regenerated on a 1.5s throttle and only when the sky has actually moved, so a day/night sweep costs a handful of prefilter passes rather than one per frame. |
 | Draw calls | ≤ 150 | instancing everywhere, plus shared materials — a 60-building street draws in about five |
 | FPS | 60 desktop / 30 mobile floor | quality tiers, plus a watchdog that steps the tier down if the measured rate sits under the floor |
 | Initial payload | ≤ 8 MB before first render | **0.97 MB** raw, ~290 kB gzipped |

@@ -11,7 +11,8 @@
     "budget": "node scripts/check-budgets.mjs",
     "decoders": "node scripts/copy-decoders.mjs",
     "verify": "npm run build && npm run budget",
-    "render": "npm run build && node scripts/render-report.mjs"
+    "render": "npm run build && node scripts/render-report.mjs",
+    "artifact": "node scripts/build-artifact.mjs"
   },
   "dependencies": {
     "@sparkjsdev/spark": "^2.1.0",

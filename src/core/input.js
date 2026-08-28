@@ -61,7 +61,20 @@ export class Input {
 
     const onClick = () => {
       if (this.hasTouch) return;
-      if (!this.pointerLocked) canvas.requestPointerLock?.();
+      if (this.pointerLocked) return;
+      /**
+       * Pointer lock is not always available - an embedded frame without
+       * allow="pointer-lock", or a browser that refuses it. The request returns
+       * a promise in current browsers, and an unhandled rejection is both noisy
+       * and pointless here: drag-to-look already covers the fallback, so the
+       * refusal is simply noted and the game plays on.
+       */
+      try {
+        const request = canvas.requestPointerLock?.();
+        if (request?.catch) request.catch(() => { this.pointerLockDenied = true; });
+      } catch {
+        this.pointerLockDenied = true;
+      }
     };
     const onLockChange = () => {
       this.pointerLocked = document.pointerLockElement === canvas;

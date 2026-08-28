@@ -74,6 +74,9 @@ export class AudioEngine {
   }
 
   async _tryLoad(url) {
+    // No point asking for it from a file:// page - the fetch is guaranteed to
+    // fail on CORS grounds and only produces a wall of red in the console.
+    if (location.protocol === 'file:') return null;
     try {
       const res = await fetch(url);
       if (!res.ok) return null;

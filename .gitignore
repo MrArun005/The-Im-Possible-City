@@ -6,3 +6,5 @@ dist
 assets/raw
 public/vendor
 render-report.html
+dist-artifact
+city-playable.html

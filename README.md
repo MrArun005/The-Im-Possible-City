@@ -214,6 +214,20 @@ public/districts/nyc/…             ← same layout
 See `public/districts/README.md` for the full slot list and
 `docs/SPLAT-CAPTURE.md` for the phone-capture recipe.
 
+## Seeing it
+
+```bash
+npm run artifact   # → city-playable.html, one self-contained file
+```
+
+The whole city in a single `.html` you can double-click, mail, or publish
+anywhere. No server, no module resolution, no asset fetches — every texture,
+prop and sound is generated at runtime, so there is nothing to fetch. ~3.4 MB.
+
+The single-file build stubs out the splat renderer (4.8 MB of JS plus a WASM
+worker, with nowhere to lazily fetch from), so the splat door's top rung throws
+and the ladder catches it. Which is the point of having a ladder.
+
 ## Seeing what it renders
 
 ```bash

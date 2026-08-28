@@ -82,13 +82,23 @@ export class CubemapInterior {
           /**
            * A bake is a photograph of a room, and like any photograph it comes
            * back flatter than the room was: one ambient pass, no local contrast,
-           * everything pushed toward the mean. Grading it back here costs
-           * nothing and is the difference between "a lit room behind the door"
-           * and "an orange smear behind the door".
+           * everything pushed toward the mean.
+           *
+           * The contrast is an S-CURVE on luminance with the colour ratio kept,
+           * NOT a subtract-scale-add around a pivot. A dark bake sits almost
+           * entirely below any sensible pivot, so the pivot form clips the whole
+           * room to black - which is exactly what it did the first time.
+           * uContrast is "1.0 = leave it alone"; anything above that is the
+           * strength of the curve.
            */
           float luma = dot(col, vec3(0.2126, 0.7152, 0.0722));
           col = mix(vec3(luma), col, uSaturation);
-          col = max((col - 0.18) * uContrast + 0.14, vec3(0.0));
+
+          float amount = clamp(uContrast - 1.0, 0.0, 1.0);
+          if (amount > 0.001 && luma > 1e-4) {
+            float shaped = luma * luma * (3.0 - 2.0 * luma);
+            col *= mix(1.0, shaped / luma, amount);
+          }
 
           // A cubemap room is frozen. One flicker uniform buys it a heartbeat.
           col *= 1.0 + uFlicker * 0.12 * sin(uTime * 7.4) * sin(uTime * 2.3);

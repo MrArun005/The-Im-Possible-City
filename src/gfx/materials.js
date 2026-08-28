@@ -102,12 +102,15 @@ export function asphaltMaterial() {
       map: T.asphaltAlbedo(),
       normalMap: T.asphaltNormal(),
       normalScale: new THREE.Vector2(0.55, 0.55),
-      roughness: 0.62,
-      metalness: 0.34,
-      color: 0x8f9096,
+      roughness: 0.55,
+      metalness: 0.22,
+      color: 0xffffff,
     });
-    // NYC asphalt is permanently a little wet - that is the whole look.
-    patchWetness(mat, 0.9, 0.35);
+    // NYC asphalt is permanently a little wet - that is the whole look. The
+    // amount is moderate on purpose: pushed further, the road stops reflecting
+    // neon and just goes black at the near edge of frame, where the viewing
+    // angle is steepest and there is nothing above it to reflect.
+    patchWetness(mat, 0.5, 0.3);
     return mat;
   });
 }
@@ -150,8 +153,11 @@ function patchWetness(mat, amount = 0.6, bias = 0) {
         '#include <roughnessmap_fragment>',
         `#include <roughnessmap_fragment>
          float wet = clamp(uWetBias + uWetness * uWetAmount, 0.0, 1.0);
-         roughnessFactor = mix(roughnessFactor, 0.055, wet);
-         diffuseColor.rgb *= mix(1.0, 0.52, wet);`
+         // Never a perfect mirror: a real wet road keeps some microroughness,
+         // and a roughness of 0.05 turns every surface into a black pane
+         // wherever there is nothing bright to reflect.
+         roughnessFactor = mix(roughnessFactor, 0.13, wet);
+         diffuseColor.rgb *= mix(1.0, 0.68, wet);`
       );
   };
   mat.customProgramCacheKey = () => `wet-${amount}-${bias}`;

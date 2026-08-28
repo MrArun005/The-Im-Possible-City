@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { cobbleMaterial, stoneMaterial, puddleMaterial, trimMaterial } from '../../gfx/materials.js';
 import * as T from '../../gfx/textures.js';
-import { victorianArchetypes, buildLondonDoorBuilding, FACADE_DEPTH } from './facades.js';
+import { victorianArchetypes, buildLondonDoorBuilding } from './facades.js';
 import { VICTORIAN_DRESSING } from '../common/dressing.js';
 import { HANSOM_CAB } from '../../world/vehicles.js';
 import { LONDON_ROOMS } from './rooms.js';
@@ -240,6 +240,9 @@ export function londonDistrict() {
       horizonTint: '#6a4c30',
       ambientColor: '#8a7458',
       tintStrength: 0.6,
+      // Moon low in the south-east, raking along the high street and across
+      // the north row of door facades.
+      lightAzimuth: 0.95,
       sunScale: 1.25,
       ambientScale: 1.5,
     },
@@ -250,7 +253,7 @@ export function londonDistrict() {
 
     lampColor: '#ffb765',
     moteColor: '#e0cba8',
-    steam: { height: 4.5, color: '#b8b2a4', size: 0.75, opacity: 0.3 },
+    steam: { height: 4.5, color: '#9c968c', size: 0.75, opacity: 0.16 },
 
     // Standing on the high street, looking east down the row of doors.
     spawn: { position: [-42, 0, 1.6], yaw: -Math.PI / 2 },

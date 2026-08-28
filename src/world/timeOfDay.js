@@ -134,12 +134,21 @@ export class TimeOfDay {
     // Apply.
     this.sun.color.copy(s.sunColor);
     this.sun.intensity = s.sunIntensity;
-    // Arc across the sky. The sun and the moon share this light, so elevation
-    // uses |sin| - at midnight the moon is as high as the noon sun, which is
-    // what stops the night city from going flat black.
+    /**
+     * Elevation follows the clock; AZIMUTH is art-directed.
+     *
+     * The hour alone gives a physically honest sky and a badly lit city: at
+     * 21:30 the moon lands behind the north row of facades, so every door on
+     * the south side of the street renders as an unlit slab. A district may
+     * therefore pin `grade.lightAzimuth` to rake the light across the facades
+     * that matter. Elevation still comes from the hour, so dawn and dusk read
+     * correctly - it is the compass bearing that is a lighting decision, not a
+     * simulation one.
+     */
     const angle = ((hour - 6) / 24) * Math.PI * 2;
     const elevation = 14 + Math.abs(Math.sin(angle)) * 56;
-    this.sun.position.set(Math.cos(angle) * 60, elevation, Math.sin(angle) * 40 - 18);
+    const azimuth = grade.lightAzimuth ?? angle;
+    this.sun.position.set(Math.cos(azimuth) * 60, elevation, Math.sin(azimuth) * 55);
     // The hemisphere light is the whole of the night's fill. It takes the
     // ambient colour directly - deriving it from the (near-black) night sky top
     // is how you end up with a city you cannot see.

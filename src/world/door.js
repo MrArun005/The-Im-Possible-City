@@ -76,7 +76,7 @@ export class Door {
 
   // ------------------------------------------------------------------ build
   _buildFrame() {
-    const { width, height, thickness } = this.cfg;
+    const { width, height } = this.cfg;
     const b = new GeometryBuilder();
     const jamb = 0.13;
     const depth = 0.22;
@@ -349,7 +349,16 @@ export class Door {
       this.ctx.audio?.rattle();
       gsap.fromTo(this.hinge.rotation,
         { y: 0 },
-        { y: this.cfg.openAngle * 0.018, duration: 0.07, yoyo: true, repeat: 5, ease: 'none' });
+        {
+          y: this.cfg.openAngle * 0.018,
+          duration: 0.07,
+          yoyo: true,
+          repeat: 5,
+          ease: 'none',
+          // An odd repeat count with yoyo lands on the "to" value, leaving the
+          // door a couple of degrees ajar forever. Snap it shut.
+          onComplete: () => { this.hinge.rotation.y = 0; },
+        });
       bus.emit('door:locked', { id: this.id, hint: this.cfg.lockedHint });
       return false;
     }

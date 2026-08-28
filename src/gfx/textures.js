@@ -199,7 +199,7 @@ export const asphaltAlbedo = () =>
   texture('asphalt-a', () => {
     const size = 512;
     const { canvas, ctx } = makeCanvas(size);
-    fill(ctx, '#2e3236', size, size);
+    fill(ctx, '#54585e', size, size);
     const h = asphaltHeight(size);
     ctx.globalAlpha = 0.34;
     ctx.drawImage(h.canvas, 0, 0);

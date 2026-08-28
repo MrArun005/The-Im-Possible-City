@@ -6,7 +6,7 @@ import {
 } from './skyline.js';
 import { MODERN_DRESSING } from '../common/dressing.js';
 import { DEFAULT_CAB } from '../../world/vehicles.js';
-import { NYC_ROOMS, dinerNeon, jazzNeon } from './rooms.js';
+import { NYC_ROOMS } from './rooms.js';
 import { makeRng } from '../../util/rng.js';
 
 /**
@@ -216,6 +216,8 @@ export function nycDistrict() {
       horizonTint: '#46608e',
       ambientColor: '#6e82b4',
       tintStrength: 0.65,
+      // Sky-glow from the south-west, down the avenue.
+      lightAzimuth: 2.15,
       sunScale: 1.0,
       ambientScale: 1.6,
     },
@@ -225,7 +227,7 @@ export function nycDistrict() {
 
     lampColor: '#ffe3b0',
     moteColor: '#b8c8e0',
-    steam: { height: 7.0, color: '#c9d4dc', size: 1.1, opacity: 0.42 },
+    steam: { height: 7.0, color: '#9fb0c4', size: 1.1, opacity: 0.2 },
 
     spawn: { position: [-42, 0, 1.6], yaw: -Math.PI / 2 },
     portalArrival: { position: [-12, 0, 13.5], yaw: 0 },

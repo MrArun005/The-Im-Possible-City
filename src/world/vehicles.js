@@ -166,6 +166,7 @@ export class Traffic {
 
   update(dt) {
     this.time += dt;
+    let braking = 0;
 
     for (const car of this.cars) {
       // Sample a stop-point ahead: where will I be in ~1.6 s?
@@ -202,10 +203,21 @@ export class Traffic {
         mesh.setMatrixAt(car.index, this._m);
         mesh.instanceMatrix.needsUpdate = true;
       }
-      // Brake lights come on when actually braking.
-      const brake = bucket.slots.tail;
-      if (brake) {
-        brake.material.opacity = car.speed < car.cruise * 0.55 ? 1 : 0.35;
+      if (car.speed < car.cruise * 0.55) braking++;
+    }
+
+    /**
+     * Tail lights share one material per archetype - instanced meshes cannot
+     * have per-instance opacity without another attribute, and the honest
+     * trade here is to brighten the whole fleet's tail lights when most of it
+     * is stopped at a light. Setting it inside the loop, as this used to, just
+     * meant the last car in the array decided for everyone.
+     */
+    if (this.cars.length) {
+      const fraction = braking / this.cars.length;
+      for (const bucket of this.meshes) {
+        const tail = bucket.slots.tail;
+        if (tail) tail.material.opacity = 0.35 + fraction * 0.6;
       }
     }
 

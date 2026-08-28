@@ -1,5 +1,3 @@
-import * as T from '../../gfx/textures.js';
-
 /**
  * New York interiors (Task 5.7): a brownstone apartment, a jazz bar and a
  * diner. Deliberately three DIFFERENT strategies, same as London - the district
@@ -117,8 +115,5 @@ export const portalBack = {
     ],
   },
 };
-
-export function dinerNeon() { return T.neonSign('DINER', { color: '#ff3d7f' }); }
-export function jazzNeon() { return T.neonSign('Blue Note', { color: '#4da6ff', script: true }); }
 
 export const NYC_ROOMS = { apartment, jazzBar, diner, portalBack };

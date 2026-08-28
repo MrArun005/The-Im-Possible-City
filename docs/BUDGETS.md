@@ -54,6 +54,13 @@ Any row over budget turns red. The `interiors`, `videos` and `lights` rows are
 the ones worth watching while adding content: they are the budgets that a new
 door can quietly break.
 
+One honesty note on `draw calls`: the number counts the **whole frame**, post
+chain included, not just the scene. Bloom is five or six passes of its own, so
+roughly 20 of the reported calls are the grade and the glow rather than the
+city. That is the number that matters for framerate, so it is the number shown —
+but if you are comparing against the plan's 300k/150 street figures, subtract
+the post chain first, or press `P` to turn post off and read it clean.
+
 ## When it is still janky
 
 The risk register's answer, and it is a real answer: **thicken the fog**

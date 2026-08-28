@@ -25,9 +25,3 @@ export function disposeSubtree(root, { keepTextures = new Set() } = {}) {
   root.parent?.remove(root);
   root.clear?.();
 }
-
-/** Marks an object so `disposeSubtree` skips its shared textures. */
-export function shared(texture) {
-  texture.userData.shared = true;
-  return texture;
-}

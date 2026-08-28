@@ -100,7 +100,12 @@ bus.on('portal:cross', async ({ target, door }) => {
   await districts.traversePortal(target, {
     onProgress: (p, label) => statsHud.set('loading', label),
   });
-  startIntroOrWalk({ skipIntro: true });
+  // traversePortal has already placed the player at the new district's portal
+  // arrival point. Running the normal spawn path here would teleport them to
+  // the far end of the street instead, which reads as a bug, not a portal.
+  rig = null;
+  player.enabled = true;
+  bus.emit('intro:end', { skipped: true });
 });
 
 bus.on('district:active', ({ id }) => statsHud.set('district', id));

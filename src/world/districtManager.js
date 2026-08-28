@@ -1,6 +1,7 @@
 import { District } from './district.js';
 import { bus } from '../util/events.js';
 import { clearTextureCache } from '../gfx/textures.js';
+import { clearMaterialCache } from '../gfx/materials.js';
 
 /**
  * District streaming (§3.2 "only one fully loaded at a time", Step 8.3).
@@ -95,6 +96,7 @@ export class DistrictManager {
   dispose() {
     this.current?.dispose();
     this.current = null;
+    clearMaterialCache();
     clearTextureCache();
   }
 }

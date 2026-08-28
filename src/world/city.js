@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { buildInstanced, GeometryBuilder } from '../gfx/instancing.js';
+import { buildInstanced } from '../gfx/instancing.js';
 import { livingWindowMaterial, seedWindowAttributes } from '../gfx/materials.js';
 import { makeRng } from '../util/rng.js';
 import { disposeSubtree } from '../util/dispose.js';
@@ -445,10 +445,16 @@ export class CityGrid {
           const pz = cell.centre.z + dr * walkIn;
           const angle = FACING_ANGLES[name];
 
-          // Lamp every 2 tiles along the street.
-          if ((alongX ? c : r) % 2 === 0) {
-            const lx = alongX ? cell.centre.x - this.tile * 0.28 : px;
-            const lz = alongX ? pz : cell.centre.z - this.tile * 0.28;
+          // Lamp every 2 tiles along the street - and ALWAYS outside a door
+          // building, which is both what a Victorian street actually did and
+          // the difference between a hero door you can see and one standing in
+          // a black hole. (The every-2-tiles rule alone skipped every odd
+          // column, and the door lots all happened to be odd.)
+          const rhythm = (alongX ? c : r) % 2 === 0;
+          if (rhythm || cell.kind === 'door-lot') {
+            const offset = cell.kind === 'door-lot' ? this.tile * 0.32 : this.tile * 0.28;
+            const lx = alongX ? cell.centre.x - offset : px;
+            const lz = alongX ? pz : cell.centre.z - offset;
             lamps.push({ position: [lx, 0.15, lz], rotationY: angle });
             this.lamps.push([lx, dress.lampHeight ?? 3.4, lz]);
           }

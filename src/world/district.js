@@ -102,6 +102,15 @@ export class District {
       ]),
     });
     if (cfg.rain) this.weather.set(cfg.rain);
+    // A thunderclap without a flash is just a noise. One exposure spike on the
+    // grade, decaying over the next second, and the whole street strobes.
+    this.weather.onLightning = () => {
+      const post = this.ctx.postfx;
+      const base = post.target.exposure;
+      post.target.exposure = base * 2.4;
+      setTimeout(() => { post.target.exposure = base * 1.5; }, 90);
+      setTimeout(() => { post.target.exposure = base; }, 260);
+    };
 
     step('Venting the steam');
     const steamSources = cfg.steamSources ?? this.city.manholes;

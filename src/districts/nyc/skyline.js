@@ -455,9 +455,16 @@ export function buildNycDoorBuilding(spec, { facing, rng }) {
       rects.push({ position: [x, y, 0.2], size: [1.55, 1.9] });
     }
   }
-  // Frontage glazing beside the door - a lit shopfront is the point of a
-  // street-level frontage, so it never rolls the dark atlas cell.
-  rects.push({ position: [2.9, 1.95, 0.24], size: [4.4, 2.3], lit: 'always' });
+  // Frontage glazing beside the door, split into bays. One 4.4m pane is a
+  // slab; three bays with different atlas cells is a frontage, and each is
+  // forced lit because street level is what you actually walk past.
+  for (let i = 0; i < 3; i++) {
+    rects.push({
+      position: [1.35 + i * 1.55, 1.95, 0.24],
+      size: [1.35, 2.3],
+      lit: 'always',
+    });
+  }
 
   return {
     group,

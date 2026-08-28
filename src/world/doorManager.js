@@ -137,9 +137,13 @@ export class DoorManager {
 
   /** Preload nearest first, evict the furthest, respect the interior budget. */
   _stream(candidates, playerPos) {
-    candidates.sort((a, b) => a._dist - b._dist);
     const loaded = this.doors.filter((d) => d.interior || d.interiorPromise);
     const budget = Math.min(BUDGETS.loadedInteriors, this.ctx.quality.maxLoadedInteriors);
+
+    // An open door with no room behind it is a hole in the world. If one ever
+    // ends up in that state - evicted while open, then walked back to - it gets
+    // priority over everything else in the queue.
+    candidates.sort((a, b) => (b.open ? 1 : 0) - (a.open ? 1 : 0) || a._dist - b._dist);
 
     for (const door of candidates) {
       if (door.interior || door.interiorPromise) continue;

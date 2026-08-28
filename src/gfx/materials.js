@@ -262,7 +262,9 @@ export function seedWindowAttributes(
     const cell = lit ? rng.int(1, cells * cells - 1) : 0;
     atlas[i * 2] = (cell % cells) * step;
     atlas[i * 2 + 1] = Math.floor(cell / cells) * step;
-    glow[i] = lit ? rng.range(0.35, maxGlow) : 0.02;
+    // An unlit window at night is not a black hole - it still catches the
+    // street. A hard 0 reads as a missing texture, especially on big panes.
+    glow[i] = lit ? rng.range(0.35, maxGlow) : rng.range(0.05, 0.11);
     flicker[i] = rng();
   }
 

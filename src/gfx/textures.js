@@ -199,21 +199,25 @@ export const asphaltAlbedo = () =>
   texture('asphalt-a', () => {
     const size = 512;
     const { canvas, ctx } = makeCanvas(size);
-    fill(ctx, '#54585e', size, size);
+    fill(ctx, '#6a6e76', size, size);
     const h = asphaltHeight(size);
     ctx.globalAlpha = 0.34;
     ctx.drawImage(h.canvas, 0, 0);
     ctx.globalAlpha = 1;
-    // Tar seams: the detail that says "this road has been repaired".
+    // Tar seams: the detail that says "this road has been repaired". ONE per
+    // tile, soft, and near-vertical - the texture tiles 40 times across the
+    // road, so five jagged seams per tile becomes two hundred scratches.
     const rng = makeRng(31);
-    ctx.strokeStyle = 'rgba(14,14,18,0.8)';
-    for (let i = 0; i < 5; i++) {
-      ctx.lineWidth = rng.range(2, 6);
-      ctx.beginPath();
-      ctx.moveTo(rng() * size, 0);
-      for (let y = 0; y <= size; y += 32) ctx.lineTo(rng() * size, y);
-      ctx.stroke();
+    ctx.strokeStyle = 'rgba(26,26,32,0.45)';
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    let sx = rng() * size;
+    ctx.moveTo(sx, 0);
+    for (let y = 0; y <= size; y += 128) {
+      sx += rng.range(-14, 14);
+      ctx.lineTo(sx, y);
     }
+    ctx.stroke();
     grain(ctx, size, size, 12);
     return canvas;
   }, { repeat: [40, 40], aniso: 8 });

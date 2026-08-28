@@ -197,7 +197,11 @@ export function nycDistrict() {
     hour: 2,
     rain: 0.55,
     // New York's sky glow is brighter than London's fog, so it fills more.
-    envIntensity: 0.45,
+    envIntensity: 0.7,
+    // A real city capture: sodium sky-glow bouncing off everything, which is
+    // most of what New York at night actually looks like.
+    environment: 'city',
+    envRotation: 2.15,
     fadeColor: '#04060a',
     skyRadius: 165,
 

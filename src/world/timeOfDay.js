@@ -254,6 +254,8 @@ export class SkyDome {
     u.uBottom.value.copy(s.fogColor);
     u.uStarStrength.value = Math.max(0, s.night - 0.45) * 1.4;
 
+    // A real HDRI is fixed; only the procedural fallback chases the sky.
+    if (this._hdri) return;
     this._envAge += dt;
     if (this._envAge > 1.5 && this._envDirty()) this.refreshEnvironment();
   }
@@ -294,11 +296,27 @@ export class SkyDome {
     this._envSnapshot = this._skySignature();
   }
 
-  /** Call once, after the dome is in the scene. */
-  attachEnvironment(renderer, scene, intensity = 1) {
+  /**
+   * Call once, after the dome is in the scene.
+   *
+   * `hdri` is an optional real captured environment (see gfx/environment.js).
+   * When one is supplied it wins outright and the per-frame procedural refresh
+   * is switched off: a real capture already has directional detail that a
+   * three-stop gradient cannot produce, and it does not need to chase the
+   * clock. `rotation` aims the brightest part of the sky down the street.
+   */
+  attachEnvironment(renderer, scene, intensity = 1, hdri = null, rotation = 0) {
     this._envCtx = { renderer, scene };
     this._envIntensity = intensity;
     this._envAge = 0;
+
+    if (hdri) {
+      this._hdri = hdri;
+      scene.environment = hdri.texture;
+      scene.environmentIntensity = intensity;
+      scene.environmentRotation = new THREE.Euler(0, rotation, 0);
+      return;
+    }
     this.refreshEnvironment();
   }
 

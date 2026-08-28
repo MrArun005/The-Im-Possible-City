@@ -220,7 +220,11 @@ export function londonDistrict() {
     rain: 0.35,
     // Sky IBL fill. Enough that no facade is ever a black slab, low enough
     // that the gaslights and the lit windows still carry the night.
-    envIntensity: 0.3,
+    envIntensity: 0.55,
+    // Real captured night sky (CC0, @pmndrs/assets). Rotated so its brightest
+    // quarter sits where the moon is, down the high street.
+    environment: 'night',
+    envRotation: 0.95,
     fadeColor: '#05070c',
 
     /** §3.2 grade block: fog, tonemap, bloom, ambient colour. */

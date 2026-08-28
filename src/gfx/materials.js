@@ -103,7 +103,11 @@ export function asphaltMaterial() {
       normalMap: T.asphaltNormal(),
       normalScale: new THREE.Vector2(0.55, 0.55),
       roughness: 0.55,
-      metalness: 0.22,
+      // Low metalness on purpose. Metal reflects and does not diffuse, so a
+      // metallic road at a grazing viewing angle mirrors the HORIZON of the
+      // environment - dark buildings - and the near edge of frame goes black.
+      // Asphalt is a dielectric; the sheen comes from roughness, not metal.
+      metalness: 0.06,
       color: 0xffffff,
     });
     // NYC asphalt is permanently a little wet - that is the whole look. The
@@ -157,7 +161,9 @@ function patchWetness(mat, amount = 0.6, bias = 0) {
          // and a roughness of 0.05 turns every surface into a black pane
          // wherever there is nothing bright to reflect.
          roughnessFactor = mix(roughnessFactor, 0.13, wet);
-         diffuseColor.rgb *= mix(1.0, 0.68, wet);`
+         // Wet darkens a surface, but not to nothing: a soaked road at night is
+         // still lighter than its own reflection of an unlit skyline.
+         diffuseColor.rgb *= mix(1.0, 0.8, wet);`
       );
   };
   mat.customProgramCacheKey = () => `wet-${amount}-${bias}`;

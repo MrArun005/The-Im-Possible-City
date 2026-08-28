@@ -8,6 +8,7 @@ import { SkyDome } from './timeOfDay.js';
 import { Steam, Dust } from '../fx/particles.js';
 import { disposeSubtree } from '../util/dispose.js';
 import { bus } from '../util/events.js';
+import { loadEnvironment } from '../gfx/environment.js';
 
 /**
  * A district (§3.2).
@@ -48,8 +49,19 @@ export class District {
       radius: cfg.skyRadius ?? 150,
     });
     this.root.add(this.sky.mesh);
-    // Ambient fill for every facade, whichever way it faces (see SkyDome).
-    this.sky.attachEnvironment(this.ctx.renderer, this.ctx.scene, cfg.envIntensity ?? 1.0);
+
+    // Ambient fill for every facade, whichever way it faces. A real captured
+    // HDRI if the district names one and it loads; the procedural sky PMREM
+    // otherwise - the same ladder as everything else.
+    const hdri = await loadEnvironment(cfg.environment, this.ctx.renderer);
+    this.sky.attachEnvironment(
+      this.ctx.renderer,
+      this.ctx.scene,
+      cfg.envIntensity ?? 1.0,
+      hdri,
+      cfg.envRotation ?? 0
+    );
+    this.usingRealEnvironment = !!hdri;
 
     step('Fitting the doors');
     this.doors = new DoorManager({ ...this.ctx, district: this });

@@ -175,7 +175,10 @@ async function capture() {
   const warnings = new Set();
   // The readout reports the WORST case across every frame, not the last frame's
   // numbers. A budget you only met on the quietest shot is not a budget met.
-  const peak = { drawCalls: 0, triangles: 0, interiors: 0, videos: 0, lights: 0, tier: null, worstFps: Infinity };
+  const peak = {
+    drawCalls: 0, postCalls: 0, triangles: 0, interiors: 0, videos: 0,
+    lights: 0, tier: null, worstFps: Infinity,
+  };
   let currentDistrict = null;
   let page = null;
 
@@ -242,10 +245,15 @@ async function capture() {
       const info = c.ctx.renderer.info;
       let lights = 0;
       c.ctx.scene.traverse((o) => { if (o.isLight && o.intensity > 0.001) lights++; });
+      // Scene calls only - the post chain is reported separately, because the
+      // 150-call budget is for the city, not for bloom.
+      const sceneCalls = c.postfx.enabled ? c.postfx.sceneCalls : info.render.calls;
+      const sceneTris = c.postfx.enabled ? c.postfx.sceneTriangles : info.render.triangles;
       return {
         fps: c.statsHud.fps,
-        drawCalls: info.render.calls,
-        triangles: info.render.triangles,
+        drawCalls: sceneCalls,
+        postCalls: info.render.calls - sceneCalls,
+        triangles: sceneTris,
         programs: info.programs?.length ?? 0,
         textures: info.memory.textures,
         interiors: c.districts.current?.doors.loadedInteriorCount() ?? 0,
@@ -255,7 +263,7 @@ async function capture() {
     });
 
     if (stats) {
-      for (const key of ['drawCalls', 'triangles', 'interiors', 'videos', 'lights']) {
+      for (const key of ['drawCalls', 'postCalls', 'triangles', 'interiors', 'videos', 'lights']) {
         peak[key] = Math.max(peak[key], stats[key] ?? 0);
       }
       if (stats.fps) peak.worstFps = Math.min(peak.worstFps, stats.fps);
@@ -290,7 +298,7 @@ const DISTRICTS = {
 
 function budgetRows(m) {
   return [
-    ['draw calls', m.drawCalls, BUDGETS.drawCalls, 'peak, whole frame including post'],
+    ['draw calls', m.drawCalls, BUDGETS.drawCalls, `peak scene calls; the post chain adds ${m.postCalls ?? 0} more`],
     ['triangles', m.triangles, BUDGETS.triangles, 'peak on screen'],
     ['rooms resident', m.interiors, BUDGETS.interiors, 'peak interiors loaded at once'],
     ['real-time lights', m.lights, BUDGETS.lights, 'peak; hemisphere + sun + one borrowed'],
@@ -320,7 +328,7 @@ function report({ frames, measured, ladder, warnings }) {
             </p>
             <p class="slate-look">${esc(f.look)}</p>
             ${f.stats ? `<p class="slate-data">
-              <span>${f.stats.drawCalls} calls</span>
+              <span>${f.stats.drawCalls} calls${f.stats.postCalls ? ` +${f.stats.postCalls} post` : ''}</span>
               <span>${fmt(f.stats.triangles)} tris</span>
               <span>${f.stats.interiors} rooms</span>
               <span>${f.stats.lights} lights</span>
@@ -330,7 +338,7 @@ function report({ frames, measured, ladder, warnings }) {
 
   let n = 0;
 
-  return `<title>City Render Proof Sheet</title>
+  return `<title>I'm Possible City Dailies</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
@@ -680,7 +688,7 @@ function report({ frames, measured, ladder, warnings }) {
 
 <div class="wrap">
   <header class="masthead">
-    <p class="eyebrow">Render proof sheet — The I'm Possible City</p>
+    <p class="eyebrow">Dailies — The I'm Possible City</p>
     <h1>Every frame, and <em>what it proves</em></h1>
     <p class="headline">${esc(NOTES.headline)}</p>
     <p class="runbar">

@@ -88,7 +88,12 @@ export class ProceduralInterior {
     // Values that lit a room fine under the old legacy-lights model (2-5) are
     // a dim nightlight now. Room practicals want tens, not units - getting this
     // wrong is what made every interior in this project bake out black.
-    if (r.keyLight !== false && quality.interiorDetail !== 'flat') {
+    //
+    // AND: a room with a fireplace does not get a separate key. The fire IS the
+    // key light, the lamp globes are emissive and cost nothing, and the sky
+    // environment fills the rest. Creating both put hemisphere + sun + key +
+    // fire on screen at once - four real-time lights against a budget of three.
+    if (r.keyLight !== false && !r.fire && quality.interiorDetail !== 'flat') {
       const key = new THREE.PointLight(
         new THREE.Color(r.lightColor ?? '#ffb066'),
         0,               // raised in setFocused - an unfocused room costs nothing
@@ -160,7 +165,8 @@ export class ProceduralInterior {
     // only while this interior is the focused one.
     const light = new THREE.PointLight(new THREE.Color('#ff8a3c'), 0, fire.range ?? 8, 1.8);
     light.position.set(0, 0.5, 0.3);
-    light.userData.baseIntensity = fire.intensity ?? 22;
+    // Carries the room on its own now that there is no separate key.
+    light.userData.baseIntensity = (fire.intensity ?? 22) * 1.25;
     light.layers.set(LAYER.INTERIOR_LIGHT);
     group.add(light);
     this.fireLight = light;

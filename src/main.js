@@ -252,6 +252,8 @@ function frame(now = performance.now()) {
     statsHud.set('interiors', districts.current?.doors.loadedInteriorCount() ?? 0);
     statsHud.set('videos', activeVideoCount());
     statsHud.set('lights', countLights(scene));
+    statsHud.set('sceneCalls', postfx.enabled ? postfx.sceneCalls : renderer.info.render.calls);
+    statsHud.set('sceneTriangles', postfx.enabled ? postfx.sceneTriangles : renderer.info.render.triangles);
     statsHud.set('tier', `${quality.name}${quality.isMobile ? '/mob' : ''}`);
     statsHud.flush();
   }

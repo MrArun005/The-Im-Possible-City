@@ -29,7 +29,27 @@ export class PostFX {
     });
 
     this.composer = new EffectComposer(renderer, target);
-    this.composer.addPass(new RenderPass(scene, camera));
+
+    /**
+     * Wrap the RenderPass so the SCENE's draw calls can be told apart from the
+     * post chain's. §3.4 budgets 150 draw calls for the city; bloom is five or
+     * six full-screen passes of its own, and counting those against the city's
+     * budget measures the wrong thing - it reported 183 and blamed the street.
+     * Now both numbers are reported, and only the scene is held to the budget.
+     */
+    const renderPass = new RenderPass(scene, camera);
+    const passRender = renderPass.render.bind(renderPass);
+    this.sceneCalls = 0;
+    this.sceneTriangles = 0;
+    renderPass.render = (...args) => {
+      const info = renderer.info.render;
+      const callsBefore = info.calls;
+      const trisBefore = info.triangles;
+      passRender(...args);
+      this.sceneCalls = info.calls - callsBefore;
+      this.sceneTriangles = info.triangles - trisBefore;
+    };
+    this.composer.addPass(renderPass);
 
     if (quality.bloom) {
       // Threshold above 0.7 so ONLY emissives glow - lamps, neon, windows.

@@ -53,10 +53,17 @@ export class StatsHud {
 
   _paint() {
     const info = this.renderer.info;
+    // The scene's own calls are what §3.4 budgets. The post chain is reported
+    // beside them rather than folded into them.
+    const sceneCalls = this.extra.sceneCalls ?? info.render.calls;
+    const postCalls = info.render.calls - sceneCalls;
+    const sceneTris = this.extra.sceneTriangles ?? info.render.triangles;
+
     const rows = [
       ['fps', this.fps, this.fps < (this.extra.fpsFloor ?? 55)],
-      ['draw calls', info.render.calls, info.render.calls > BUDGETS.drawCalls],
-      ['triangles', fmt(info.render.triangles), info.render.triangles > BUDGETS.streetTriangles],
+      ['draw calls', sceneCalls, sceneCalls > BUDGETS.drawCalls],
+      ['+ post', postCalls, false],
+      ['triangles', fmt(sceneTris), sceneTris > BUDGETS.streetTriangles],
       ['programs', info.programs?.length ?? 0, false],
       ['textures', info.memory.textures, false],
       ['geometries', info.memory.geometries, false],

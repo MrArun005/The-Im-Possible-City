@@ -358,13 +358,18 @@ export function buildNycDoorBuilding(spec, { facing, rng }) {
     hole: [doorX, doorH / 2 + (spec.stoop ? 1.34 : 0), doorW, doorH],
     pos: [0, 0, -0.21],
   });
-  b.box('walls', [WIDTH, height, 0.4], [0, height / 2, -DEPTH],
-    { uvScale: [WIDTH / 3, height / 3] });
+  // See the note in the London builder: a `hollow` frontage omits its back
+  // wall and roof, because the district portal's interior is deeper than the
+  // building that holds it.
   b.box('walls', [0.4, height, DEPTH], [-WIDTH / 2, height / 2, -DEPTH / 2],
     { uvScale: [DEPTH / 3, height / 3] });
   b.box('walls', [0.4, height, DEPTH], [WIDTH / 2, height / 2, -DEPTH / 2],
     { uvScale: [DEPTH / 3, height / 3] });
-  b.box('walls', [WIDTH, 0.4, DEPTH], [0, height, -DEPTH / 2]);
+  if (!spec.hollow) {
+    b.box('walls', [WIDTH, height, 0.4], [0, height / 2, -DEPTH],
+      { uvScale: [WIDTH / 3, height / 3] });
+    b.box('walls', [WIDTH, 0.4, DEPTH], [0, height, -DEPTH / 2]);
+  }
 
   b.box('stone', [WIDTH + 0.18, 0.3, 0.32], [0, groundH, 0.06]);
   b.box('trim', [WIDTH + 0.5, 0.42, 0.66], [0, height + 0.12, 0.16]);

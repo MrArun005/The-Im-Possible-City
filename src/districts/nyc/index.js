@@ -141,6 +141,7 @@ function doorLots(rooms) {
     },
     {
       id: 'the-crossing-back', brick: 4, storeys: 5, doorWidth: 1.6, doorX: 0, fire: false,
+      hollow: true,
       neon: { label: 'SUBWAY', color: '#8fb8ff', width: 4.8 },
       doors: [{
         id: 'the-crossing-back',

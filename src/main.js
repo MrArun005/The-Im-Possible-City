@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import gsap from 'gsap';
 import { createRenderer, createCamera, bindResize, EYE_HEIGHT } from './core/renderer.js';
 import { PostFX } from './fx/post.js';
 import { detectTier, makeTierWatchdog } from './core/quality.js';
@@ -29,6 +30,15 @@ import { setParticlePixelScale } from './fx/particles.js';
 
 const params = new URLSearchParams(location.search);
 const canvas = document.getElementById('scene');
+
+/**
+ * GSAP clamps its own delta to 33ms whenever a frame takes longer than 500ms
+ * (lag smoothing). On a weak GPU that turns a 1.4s door swing into a tween
+ * that crawls for a minute and never visibly finishes - the exact machine
+ * where the door opening matters most. Disable it: a door should take 1.4
+ * REAL seconds to open at 5fps just as it does at 60.
+ */
+gsap.ticker.lagSmoothing(0);
 
 const quality = detectTier();
 const renderer = createRenderer(canvas, quality);
@@ -266,4 +276,24 @@ document.addEventListener('visibilitychange', () => {
 boot().catch((err) => console.error('[boot]', err));
 
 // Handy in the console: `city.districts.goTo('nyc')`.
-window.city = { ctx, districts, player, timeOfDay, quality, statsHud, postfx, audio };
+window.city = {
+  ctx, districts, player, timeOfDay, quality, statsHud, postfx, audio,
+
+  /**
+   * Snap a door fully open or shut with no tween. For screenshots, trailer
+   * frames and end-to-end tests, where waiting on an animation to land is a
+   * source of flaky, silently-wrong captures.
+   */
+  snapDoor(id, open = true) {
+    const door = districts.current?.doors.get(id);
+    if (!door) return null;
+    gsap.killTweensOf(door.hinge.rotation);
+    gsap.killTweensOf(door.spill);
+    door.open = open;
+    door.busy = false;
+    door.hinge.rotation.y = open ? door.cfg.openAngle : 0;
+    door.spill.target = open ? 1 : 0;
+    if (open) door.preload();
+    return door;
+  },
+};

@@ -1,6 +1,11 @@
 /**
  * London interiors, as recipes (Task 0.5, 1.8).
  *
+ * A NOTE ON `lightIntensity` AND `fire.intensity`: three's lights are
+ * physically based since r155, so these are candela and fall off as 1/d². A
+ * room practical wants tens, not units - values in the 2-5 range look correct
+ * in a Blender viewport and render as a black box here.
+ *
  * A recipe is data: a box, a palette and a prop list. The `procedural` strategy
  * builds it; the `cubemap` strategy bakes it to six faces and throws the
  * geometry away. The same recipe therefore serves two rungs of the ladder, and
@@ -26,13 +31,13 @@ export const study = {
   ceilingColor: 0x18130f,
   glowColor: '#ffcf90',
   lightPos: [1.4, 2.1, -2.2],
-  lightIntensity: 2.6,
-  lightRange: 8,
+  lightIntensity: 16,
+  lightRange: 9,
   warmth: 1.15,
   dustScale: 1.2,
   dustColor: '#ffd9a8',
   nightGlassColor: '#1a2636',
-  fire: { pos: [-2.1, 0, -2.6], intensity: 5.4, range: 7 },
+  fire: { pos: [-2.1, 0, -2.6], intensity: 26, range: 8 },
   props: [
     { type: 'fireplace', pos: [-2.1, 0, -2.72], rotY: Math.PI / 2, width: 1.6 },
     { type: 'armchair', pos: [-0.75, 0, -2.0], rotY: -1.05 },
@@ -63,9 +68,9 @@ export const parlour = {
   fabricColor: 0x3a2438,
   glowColor: '#ffbe78',
   lightPos: [0, 2.2, -2.4],
-  lightIntensity: 2.2,
+  lightIntensity: 14,
   warmth: 0.95,
-  fire: { pos: [2.0, 0, -2.4], intensity: 4.2, range: 6 },
+  fire: { pos: [2.0, 0, -2.4], intensity: 20, range: 7 },
   props: [
     { type: 'piano', pos: [-1.3, 0, -4.2], rotY: 0.16 },
     { type: 'fireplace', pos: [2.28, 0, -2.4], rotY: -Math.PI / 2, width: 1.4 },
@@ -91,17 +96,26 @@ export const pawnshop = {
   fabricColor: 0x2a3230,
   glowColor: '#c9e2b0',
   lightPos: [0, 2.1, -2.0],
-  lightIntensity: 1.6,
+  lightIntensity: 13,
+  lightPos: [0.2, 2.0, -2.6],
   warmth: 0.6,
   dustScale: 0.7,
+  // A cubemap room is seen from exactly one point, so it has to be dressed for
+  // that one shot: the far wall carries the detail, and nothing important hides
+  // behind the counter.
   props: [
-    { type: 'counter', pos: [0, 0, -1.4], width: 3.2 },
-    { type: 'bookshelf', pos: [-1.4, 0, -4.1], width: 1.6, height: 2.4 },
-    { type: 'bookshelf', pos: [0.9, 0, -4.1], width: 1.5, height: 2.4 },
-    { type: 'clock', pos: [2.0, 0, -3.9], rotY: -0.3 },
+    { type: 'counter', pos: [0, 0, -1.5], width: 3.2 },
+    { type: 'bookshelf', pos: [-1.5, 0, -4.05], width: 1.5, height: 2.5 },
+    { type: 'bookshelf', pos: [0.6, 0, -4.05], width: 1.5, height: 2.5 },
+    { type: 'clock', pos: [1.9, 0, -3.8], rotY: -0.4 },
+    { type: 'painting', pos: [-2.2, 1.9, -4.12], width: 0.6, height: 0.8 },
     { type: 'crate', pos: [-1.9, 0, -0.7], size: 0.6 },
     { type: 'crate', pos: [-1.9, 0.6, -0.7], size: 0.45 },
-    { type: 'lamp', pos: [0, 1.06, -1.5], height: 0.38 },
+    { type: 'crate', pos: [1.9, 0, -0.8], size: 0.5 },
+    { type: 'sidetable', pos: [1.7, 0, -2.6] },
+    { type: 'lamp', pos: [1.7, 0.64, -2.6], height: 0.4 },
+    { type: 'lamp', pos: [-0.9, 1.06, -1.6], height: 0.38 },
+    { type: 'floorlamp', pos: [2.0, 0, -1.2] },
   ],
 };
 
@@ -122,11 +136,11 @@ export const secretRoom = {
   nightGlassColor: '#0b1428',
   lightColor: '#9fc0ff',
   lightPos: [0, 2.8, -2.6],
-  lightIntensity: 2.0,
+  lightIntensity: 13,
   warmth: 0.7,
   dustScale: 1.8,
   dustColor: '#cfe0ff',
-  fire: { pos: [-2.3, 0, -1.4], intensity: 3.4, range: 5 },
+  fire: { pos: [-2.3, 0, -1.4], intensity: 18, range: 6 },
   props: [
     { type: 'desk', pos: [0, 0, -4.4], rotY: Math.PI },
     { type: 'lamp', pos: [-0.6, 0.83, -4.4], height: 0.44 },
@@ -145,8 +159,8 @@ export const portalVestibule = {
   id: 'the-crossing',
   target: 'nyc',
   preview: {
-    throat: 3.4,
-    distance: 10,
+    throat: 3.2,
+    distance: 7,
     neonLabel: 'BROADWAY',
     neonColor: '#ff3d7f',
     hazeColor: '#2b3a58',

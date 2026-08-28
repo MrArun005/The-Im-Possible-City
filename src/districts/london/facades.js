@@ -239,14 +239,20 @@ export function buildLondonDoorBuilding(spec, { facing, rng }) {
     hole: [doorX, doorH / 2, doorW, doorH],
     pos: [0, 0, -0.21],
   });
-  // Back and sides, so the building is a closed box and nothing leaks.
-  b.box('walls', [WIDTH, height, 0.4], [0, height / 2, -DEPTH],
-    { uvScale: [WIDTH / 3, height / 3] });
+  // Sides always; back and roof only if the building is a closed box.
+  //
+  // A `hollow` building is one whose interior is deeper than the building -
+  // the district portal, whose "room" is a 20m preview slice of New York. Its
+  // own back wall would stand between you and the other city.
   b.box('walls', [0.4, height, DEPTH], [-WIDTH / 2, height / 2, -DEPTH / 2],
     { uvScale: [DEPTH / 3, height / 3] });
   b.box('walls', [0.4, height, DEPTH], [WIDTH / 2, height / 2, -DEPTH / 2],
     { uvScale: [DEPTH / 3, height / 3] });
-  b.box('walls', [WIDTH, 0.4, DEPTH], [0, height, -DEPTH / 2]);
+  if (!spec.hollow) {
+    b.box('walls', [WIDTH, height, 0.4], [0, height / 2, -DEPTH],
+      { uvScale: [WIDTH / 3, height / 3] });
+    b.box('walls', [WIDTH, 0.4, DEPTH], [0, height, -DEPTH / 2]);
+  }
 
   // Ground-floor stone, string courses, cornice, chimneys - as the terrace.
   b.box('stone', [WIDTH + 0.16, 0.3, 0.34], [0, groundH, 0.06]);

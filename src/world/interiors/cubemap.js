@@ -92,7 +92,7 @@ export class CubemapInterior {
   /** Renders a temporary build of the room into a cube render target. */
   _bake(recipe, size) {
     const { renderer, quality } = this.ctx;
-    const resolution = quality.name === 'low' ? 128 : quality.name === 'medium' ? 256 : 512;
+    const resolution = quality.name === 'low' ? 256 : quality.name === 'medium' ? 512 : 768;
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(recipe?.bakeBackground ?? 0x05040a);
@@ -114,9 +114,19 @@ export class CubemapInterior {
     const fill = new THREE.HemisphereLight(0x6a5842, 0x2a2018, 1.6);
     scene.add(fill);
 
+    /**
+     * NO MIPMAPS, deliberately.
+     *
+     * The lookup direction `normalize(localPos - centre)` swings fast across
+     * adjacent pixels when the eye is close to a large box - which is exactly
+     * the case at a doorway. Large UV derivatives make the GPU pick a high mip
+     * level, and the room dissolves into a smear at the very moment you lean in
+     * to look at it. Plain linear filtering stays sharp.
+     */
     const target = new THREE.WebGLCubeRenderTarget(resolution, {
-      generateMipmaps: true,
-      minFilter: THREE.LinearMipmapLinearFilter,
+      generateMipmaps: false,
+      minFilter: THREE.LinearFilter,
+      magFilter: THREE.LinearFilter,
       type: THREE.HalfFloatType,
     });
     const cubeCamera = new THREE.CubeCamera(0.05, 60, target);

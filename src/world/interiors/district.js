@@ -63,7 +63,7 @@ export class DistrictPortalInterior {
     this._built.push(stepMat);
 
     // ---- the vista --------------------------------------------------
-    const vistaZ = -throatDepth - (preview.distance ?? 9);
+    const vistaZ = -throatDepth - (preview.distance ?? 7);
     const skyTex = T.skyGradient(preview.sky ?? [
       [0, '#04070f'], [0.45, '#101a2e'], [0.78, '#2a3550'], [1, '#4a3a44'],
     ]);
@@ -77,9 +77,9 @@ export class DistrictPortalInterior {
     const towerGeo = new THREE.BoxGeometry(1, 1, 1);
     const towerMat = new THREE.MeshStandardMaterial({ color: 0x0d1018, roughness: 0.94 });
     const towerPlacements = (preview.towers ?? [
-      { position: [-7.5, 0, vistaZ - 2], scale: [5.5, 22, 5.5] },
-      { position: [7.0, 0, vistaZ - 5], scale: [6.5, 30, 6.0] },
-      { position: [0.5, 0, vistaZ - 11], scale: [8.0, 38, 7.0] },
+      { position: [-7.5, 0, vistaZ - 2], scale: [5.5, 24, 5.5] },
+      { position: [7.0, 0, vistaZ - 5], scale: [6.5, 32, 6.0] },
+      { position: [0.5, 0, vistaZ - 10], scale: [8.0, 40, 7.0] },
     ]).map((t) => ({
       ...t,
       position: [t.position[0], t.scale[1] / 2, t.position[2]],
@@ -137,7 +137,9 @@ export class DistrictPortalInterior {
     });
     const ground = new THREE.Mesh(new THREE.PlaneGeometry(70, 46), groundMat);
     ground.rotation.x = -Math.PI / 2;
-    ground.position.set(0, -1.2, vistaZ - 6);
+    // Only just below the doorstep: any lower and the city's own ground plane,
+    // which is still there behind the hollow building, hides the vista's.
+    ground.position.set(0, -0.25, vistaZ - 6);
     this.root.add(ground);
     this._built.push(groundMat);
 
@@ -153,7 +155,7 @@ export class DistrictPortalInterior {
 
     if (this.ctx.quality.steamPuffs > 0) {
       this._steam = new Steam({
-        sources: [[-2.2, -1.1, vistaZ + 2], [3.4, -1.1, vistaZ - 1]],
+        sources: [[-2.2, -0.2, vistaZ + 2], [3.4, -0.2, vistaZ - 1]],
         perSource: Math.max(8, Math.round(this.ctx.quality.steamPuffs / 6)),
         height: 7,
         color: '#9fb0c4',

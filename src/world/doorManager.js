@@ -112,7 +112,9 @@ export class DoorManager {
         this._updateSecret(door);
       }
 
-      if (dist < nearestDist && dist < 3.4 && facing > 0.1) {
+      // Reach far enough to cover a flight of steps and a railing.
+      const reach = door.cfg.reach ?? 4.4;
+      if (dist < nearestDist && dist < reach && facing > 0.1) {
         nearest = door;
         nearestDist = dist;
       }
@@ -151,8 +153,24 @@ export class DoorManager {
       loaded.push(door);
     }
 
+    /**
+     * Hard enforcement, not just admission control. Anything can call
+     * `door.preload()` - a debug hook, a district's own decorate(), a future
+     * feature - so the cap is re-checked here every frame and the furthest
+     * closed rooms are evicted until it holds. §3.4 says "non-negotiable"; this
+     * is what makes that true rather than aspirational.
+     */
+    const alive = loaded.filter((d) => d.interior);
+    if (alive.length > budget) {
+      alive
+        .filter((d) => !d.open)
+        .sort((a, b) => b._dist - a._dist)
+        .slice(0, alive.length - budget)
+        .forEach((d) => d.unloadInterior());
+    }
+
     // Focus exactly one interior, so lights stay inside budget.
-    const focus = loaded.filter((d) => d.interior).sort((a, b) => a._dist - b._dist)[0] ?? null;
+    const focus = this.doors.filter((d) => d.interior).sort((a, b) => a._dist - b._dist)[0] ?? null;
     if (focus !== this.focused) {
       this.focused?.interior?.setFocused(false);
       focus?.interior?.setFocused(true);

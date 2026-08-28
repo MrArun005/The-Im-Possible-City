@@ -176,6 +176,7 @@ function doorLots(rooms) {
     },
     {
       id: 'the-crossing', sign: 'Underground', brick: 4, storeys: 3, doorWidth: 1.6,
+      hollow: true,
       doors: [{
         id: 'the-crossing',
         label: 'W',

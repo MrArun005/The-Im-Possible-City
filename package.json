@@ -10,7 +10,8 @@
     "preview": "vite preview --port 4173",
     "budget": "node scripts/check-budgets.mjs",
     "decoders": "node scripts/copy-decoders.mjs",
-    "verify": "npm run build && npm run budget"
+    "verify": "npm run build && npm run budget",
+    "render": "npm run build && node scripts/render-report.mjs"
   },
   "dependencies": {
     "@sparkjsdev/spark": "^2.1.0",
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "vite": "^7.0.0",
-    "vite-plugin-glsl": "^1.6.1"
+    "vite-plugin-glsl": "^1.6.1",
+    "playwright": "^1.49.0"
   }
 }

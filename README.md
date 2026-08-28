@@ -214,6 +214,27 @@ public/districts/nyc/…             ← same layout
 See `public/districts/README.md` for the full slot list and
 `docs/SPLAT-CAPTURE.md` for the phone-capture recipe.
 
+## Seeing what it renders
+
+```bash
+npm run render     # builds, drives a real browser, writes render-report.html
+```
+
+`scripts/render-report.mjs` captures a fixed list of checkpoint frames and
+writes a **self-contained HTML proof sheet** — frames embedded, budget readout
+beside them, and the fallback ladder printed as it actually fired on that run.
+It runs on software GL by default, so it works on a machine with no GPU (set
+`RENDER_GPU=1` to use a real one, `CHROMIUM_PATH=` to point at a browser you
+already have).
+
+Every frame in the shot list carries a `look` note saying what it exists to
+prove — "nothing leaks through the closed door", "the word DINER is still
+readable" — so a regression has somewhere obvious to show up. The shot list and
+the open-issues notes are the first thing in the file; edit them as work lands.
+
+The readout reports the **worst** case across every frame, not the last frame's
+numbers: a budget you only met on the quietest shot is not a budget met.
+
 ## Budgets
 
 `src/core/budgets.js` is the single source of truth, read by the runtime HUD

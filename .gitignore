@@ -5,3 +5,4 @@ dist
 .vite
 assets/raw
 public/vendor
+render-report.html

@@ -1,0 +1,22 @@
+{
+  "name": "im-possible-city",
+  "private": true,
+  "version": "0.5.0",
+  "type": "module",
+  "description": "The I'm Possible 3D City - a cinematic, walkable, district-based city in the browser.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4173",
+    "budget": "node scripts/check-budgets.mjs"
+  },
+  "dependencies": {
+    "@sparkjsdev/spark": "^2.1.0",
+    "gsap": "^3.13.0",
+    "three": "^0.185.0"
+  },
+  "devDependencies": {
+    "vite": "^7.0.0",
+    "vite-plugin-glsl": "^1.6.1"
+  }
+}

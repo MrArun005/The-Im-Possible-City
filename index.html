@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#0a0c10" />
+    <title>The I'm Possible City</title>
+    <meta name="description" content="A cinematic, walkable city in the browser. Victorian London by gaslight, New York under lights." />
+    <link rel="stylesheet" href="/src/ui/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="scene"></canvas>
+
+      <!-- Loading experience: a foggy 2D illustration that match-cuts into real 3D fog -->
+      <div id="loader" class="loader">
+        <canvas id="loader-art" class="loader-art"></canvas>
+        <div class="loader-body">
+          <h1 class="loader-title">The I'm Possible City</h1>
+          <p class="loader-sub" id="loader-sub">Lighting the gas lamps&hellip;</p>
+          <div class="loader-bar"><i id="loader-fill"></i></div>
+          <button id="loader-enter" class="loader-enter" hidden>Step into the fog</button>
+        </div>
+      </div>
+
+      <!-- HUD -->
+      <div id="hud" class="hud" hidden>
+        <div id="prompt" class="prompt" hidden><kbd id="prompt-key">E</kbd><span id="prompt-label">Open</span></div>
+        <div id="toast" class="toast" hidden></div>
+        <div id="district-card" class="district-card" hidden>
+          <strong id="district-name"></strong><span id="district-sub"></span>
+        </div>
+        <div id="stats" class="stats" hidden></div>
+        <div class="controls-hint" id="controls-hint">
+          <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> walk</span>
+          <span><kbd>Mouse</kbd> look</span>
+          <span><kbd>E</kbd> doors</span>
+          <span><kbd>Shift</kbd> run</span>
+          <span><kbd>N</kbd> night</span>
+          <span><kbd>R</kbd> rain</span>
+          <span><kbd>F1</kbd> stats</span>
+        </div>
+        <div id="touch" class="touch" hidden>
+          <div class="stick" id="stick"><i id="stick-knob"></i></div>
+          <button class="touch-action" id="touch-action">OPEN</button>
+        </div>
+        <div id="vignette-frame" class="vignette-frame"></div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

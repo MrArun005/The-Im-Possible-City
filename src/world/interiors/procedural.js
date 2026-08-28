@@ -5,6 +5,7 @@ import { addProp } from './props.js';
 import { makeRng } from '../../util/rng.js';
 import { disposeSubtree } from '../../util/dispose.js';
 import { Dust } from '../../fx/particles.js';
+import { LAYER } from '../../core/budgets.js';
 
 /**
  * The `procedural` interior strategy - a room built from a recipe.
@@ -81,15 +82,22 @@ export class ProceduralInterior {
     if (r.fire) this._buildFire(r.fire, quality);
 
     // ---- practical lights (budget: 1 per focused interior) -----------
+    //
+    // NOTE ON UNITS: since three r155 lights are physically based, so a
+    // PointLight's intensity is candela and its contribution falls as 1/d².
+    // Values that lit a room fine under the old legacy-lights model (2-5) are
+    // a dim nightlight now. Room practicals want tens, not units - getting this
+    // wrong is what made every interior in this project bake out black.
     if (r.keyLight !== false && quality.interiorDetail !== 'flat') {
       const key = new THREE.PointLight(
         new THREE.Color(r.lightColor ?? '#ffb066'),
         0,               // raised in setFocused - an unfocused room costs nothing
-        r.lightRange ?? 7,
-        1.7
+        r.lightRange ?? 9,
+        1.6
       );
       key.position.set(...(r.lightPos ?? [0, h * 0.72, -d * 0.45]));
-      key.userData.baseIntensity = r.lightIntensity ?? 2.4;
+      key.userData.baseIntensity = r.lightIntensity ?? 14;
+      key.layers.set(LAYER.INTERIOR_LIGHT);
       this.root.add(key);
       this.keyLight = key;
     }
@@ -110,7 +118,10 @@ export class ProceduralInterior {
       this.materials.push(this._dust.points.material);
     }
 
-    // ---- the "outside" seen through an interior window ---------------
+    // Every mesh in the room opts in to being lit by the room's own lights.
+    // (They keep layer 0 as well, so they still render normally.)
+    this.root.traverse((o) => o.layers.enable(LAYER.INTERIOR_LIGHT));
+
     this.root.updateMatrixWorld(true);
   }
 
@@ -147,9 +158,10 @@ export class ProceduralInterior {
 
     // The flickering point light. Costs one of the three realtime lights, and
     // only while this interior is the focused one.
-    const light = new THREE.PointLight(new THREE.Color('#ff8a3c'), 0, fire.range ?? 6.5, 2);
+    const light = new THREE.PointLight(new THREE.Color('#ff8a3c'), 0, fire.range ?? 8, 1.8);
     light.position.set(0, 0.5, 0.3);
-    light.userData.baseIntensity = fire.intensity ?? 5.2;
+    light.userData.baseIntensity = fire.intensity ?? 22;
+    light.layers.set(LAYER.INTERIOR_LIGHT);
     group.add(light);
     this.fireLight = light;
 
@@ -210,36 +222,51 @@ function buildSlotMaterials(recipe, quality) {
 
   const std = (opts) => new THREE.MeshStandardMaterial({ metalness: 0, roughness: 0.85, ...opts });
 
+  // §5.3: bake the lighting into the materials - here, an emissive floor tied to the
+  // room's own warmth, so a room reads as lit even before its practicals are
+  // focused, and never renders as a black box.
+  const ambient = new THREE.Color(recipe.ambientTint ?? '#ff9a52').multiplyScalar(
+    0.075 * (recipe.warmth ?? 1)
+  );
+
   const mats = {
     wall: std({
       map: recipe.wallStyle === 'plaster' ? T.stone(1) : T.wallpaper(wallpaperVariant),
       color: recipe.wallColor ?? 0xffffff,
       roughness: 0.92,
       side: THREE.DoubleSide,
+      emissive: ambient.clone().multiplyScalar(0.9),
     }),
     floor: std({
       map: recipe.floorStyle === 'tile' ? T.stone(0) : T.wood(floorVariant),
       color: recipe.floorColor ?? 0xffffff,
       roughness: 0.6,
       metalness: 0.05,
+      emissive: ambient.clone().multiplyScalar(1.1),
     }),
     ceiling: std({ color: recipe.ceilingColor ?? 0x171310, roughness: 0.96, side: THREE.DoubleSide }),
     trim: std({ color: recipe.trimColor ?? 0x1d1a16, roughness: 0.55 }),
-    wood: std({ map: T.wood(recipe.propWood ?? 0), roughness: 0.66, metalness: 0.03 }),
-    fabric: std({ color: recipe.fabricColor ?? 0x4a2b28, roughness: 0.97 }),
+    wood: std({
+      map: T.wood(recipe.propWood ?? 0), roughness: 0.66, metalness: 0.03,
+      emissive: ambient.clone().multiplyScalar(0.7),
+    }),
+    fabric: std({
+      color: recipe.fabricColor ?? 0x4a2b28, roughness: 0.97,
+      emissive: ambient.clone().multiplyScalar(0.8),
+    }),
     dark: std({ color: 0x14110f, roughness: 0.72 }),
     metal: std({ color: 0x35322e, roughness: 0.4, metalness: 0.8 }),
     brass: std({ color: 0x8a6a2e, roughness: 0.32, metalness: 0.9 }),
     paper: std({ color: 0xc8bda0, roughness: 0.9 }),
     stonework: std({ map: T.stone(2), color: 0xbdb6ab, roughness: 0.86 }),
-    books: std({ map: T.books(), roughness: 0.88 }),
-    rug: std({ map: T.rug(), roughness: 0.99 }),
+    books: std({ map: T.books(), roughness: 0.88, emissive: ambient.clone().multiplyScalar(0.8) }),
+    rug: std({ map: T.rug(), roughness: 0.99, emissive: ambient.clone().multiplyScalar(0.9) }),
     glass: new THREE.MeshStandardMaterial({
       color: 0x9fc4c8, roughness: 0.06, metalness: 0.1,
       transparent: true, opacity: 0.42,
     }),
     glow: new THREE.MeshBasicMaterial({
-      color: new THREE.Color(recipe.glowColor ?? '#ffcf90').multiplyScalar(2.6 * warm),
+      color: new THREE.Color(recipe.glowColor ?? '#ffcf90').multiplyScalar(4.2 * warm),
       toneMapped: false,
     }),
     coldglow: new THREE.MeshBasicMaterial({

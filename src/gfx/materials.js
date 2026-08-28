@@ -30,8 +30,8 @@ export function facadeMaterial(variant = 0) {
     const mat = new THREE.MeshStandardMaterial({
       map: T.brick(variant),
       normalMap: T.brickNormal(variant),
-      normalScale: new THREE.Vector2(0.8, 0.8),
-      roughness: 0.92,
+      normalScale: new THREE.Vector2(0.55, 0.55),
+      roughness: 0.9,
       metalness: 0,
       color: 0xffffff,
     });
@@ -84,10 +84,10 @@ export function cobbleMaterial() {
       map: T.cobbleAlbedo(),
       normalMap: T.cobbleNormal(),
       roughnessMap: T.cobbleRough(),
-      normalScale: new THREE.Vector2(1.15, 1.15),
+      normalScale: new THREE.Vector2(0.5, 0.5),
       roughness: 1,
       metalness: 0.02,
-      color: 0xbfbcb6,
+      color: 0xffffff,
     });
     // Rain mode swaps roughness by uniform rather than by texture (Task 3.3):
     // a uniform tween is free, a texture swap is a hitch.
@@ -235,7 +235,11 @@ export function livingWindowMaterial(atlas, { cells = 4, additive = false } = {}
  * Attaches the instanced attributes the living-window material expects.
  * `pattern` decides how windows are lit: not every building is a Christmas tree.
  */
-export function seedWindowAttributes(instanced, rng, { cells = 4, litChance = 0.55, maxGlow = 1.6 } = {}) {
+export function seedWindowAttributes(
+  instanced,
+  rng,
+  { cells = 4, litChance = 0.55, maxGlow = 1.6, hints = null } = {}
+) {
   const count = instanced.count;
   const atlas = new Float32Array(count * 2);
   const glow = new Float32Array(count);
@@ -243,7 +247,12 @@ export function seedWindowAttributes(instanced, rng, { cells = 4, litChance = 0.
   const step = 1 / cells;
 
   for (let i = 0; i < count; i++) {
-    const lit = rng.chance(litChance);
+    // A hint of 'always' forces a lit cell. Big panes - shopfronts, diner
+    // glazing, lobby glass - must never roll the dark cell: a nine-metre black
+    // rectangle at street level reads as a hole in the world, not as a shop
+    // that has closed for the night.
+    const hint = hints?.[i];
+    const lit = hint === 'always' ? true : hint === 'never' ? false : rng.chance(litChance);
     const cell = lit ? rng.int(1, cells * cells - 1) : 0;
     atlas[i * 2] = (cell % cells) * step;
     atlas[i * 2 + 1] = Math.floor(cell / cells) * step;

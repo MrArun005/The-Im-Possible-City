@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { SkeletonUtils } from 'three/addons/utils/SkeletonUtils.js';
+import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js';
 import * as T from '../gfx/textures.js';
 import { getGltfLoader } from './interiors/gltf.js';
 import { disposeSubtree } from '../util/dispose.js';
@@ -102,7 +102,7 @@ export class Crowd {
     const fit = this.height / modelHeight;
 
     for (const walker of this.walkers) {
-      const clone = SkeletonUtils.clone(source);
+      const clone = cloneSkinned(source);
       clone.scale.setScalar(fit * walker.scale);
       clone.traverse((o) => { if (o.isMesh) { o.castShadow = false; o.frustumCulled = true; } });
       this.root.add(clone);
@@ -146,6 +146,8 @@ export class Crowd {
         uniform float uCols;
         uniform float uRows;
         varying vec2 vAtlasUv;
+        // vFogDepth is declared by three's <fog_pars_vertex>-side chunk pair;
+        // we only assign it. Declaring it again is a redefinition error.
         varying float vFogDepth;
 
         void main() {
@@ -175,7 +177,7 @@ export class Crowd {
         uniform sampler2D uMap;
         uniform vec3 uColor;
         varying vec2 vAtlasUv;
-        varying float vFogDepth;
+        // <fog_pars_fragment> declares vFogDepth itself - do not re-declare.
         #include <fog_pars_fragment>
 
         void main() {

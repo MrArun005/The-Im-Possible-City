@@ -45,7 +45,14 @@ export const ladderLog = [];
 
 export async function createInterior(spec, ctx) {
   const requested = spec.type ?? 'procedural';
-  const ladder = LADDERS[requested] ?? ['procedural'];
+  /**
+   * A door may override its own ladder with `interior.ladder`. This matters for
+   * hero doors: the default gltf ladder stops at `cubemap`, which is cheap and
+   * parallax-correct but frozen - no dust in the light shaft, no fire flicker.
+   * For the door the whole project is judged on, a full procedural room is the
+   * better second choice even though it costs more.
+   */
+  const ladder = spec.ladder ?? LADDERS[requested] ?? ['procedural'];
 
   for (let rung = 0; rung < ladder.length; rung++) {
     const type = ladder[rung];

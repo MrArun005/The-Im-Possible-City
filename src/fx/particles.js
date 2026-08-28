@@ -2,6 +2,24 @@ import * as THREE from 'three';
 import * as T from '../gfx/textures.js';
 
 /**
+ * Shared uniform for point-sprite sizing.
+ *
+ * `gl_PointSize` is in PIXELS, not world units, so converting a world radius to
+ * a pixel radius needs the projection: pixels = worldSize * (viewportHeight /
+ * (2 * tan(fov/2))) / distance. Guessing that factor instead of computing it is
+ * how 3cm dust motes end up rendering as 270-pixel additive blobs that white
+ * out the entire city. main.js keeps this in sync on resize.
+ */
+export const particleGlobals = {
+  uPixelScale: { value: 600 },
+};
+
+export function setParticlePixelScale(viewportHeight, fovDegrees) {
+  const fov = (fovDegrees * Math.PI) / 180;
+  particleGlobals.uPixelScale.value = viewportHeight / (2 * Math.tan(fov / 2));
+}
+
+/**
  * GPU particles (Tasks 3.1 / 3.3 / 5.5).
  *
  * All three systems share one idea: the CPU uploads static per-particle seeds
@@ -14,7 +32,8 @@ import * as T from '../gfx/textures.js';
 const DUST_VERT = /* glsl */ `
   attribute vec4 aSeed;          // xyz = jitter, w = speed scale
   uniform float uTime;
-  uniform float uSize;
+  uniform float uSize;         // world-space radius, in metres
+  uniform float uPixelScale;   // viewportHeight / (2 * tan(fov/2))
   uniform vec3  uMin;
   uniform vec3  uSpan;
   uniform vec3  uDrift;
@@ -32,8 +51,8 @@ const DUST_VERT = /* glsl */ `
 
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
     gl_Position = projectionMatrix * mv;
-    float dist = -mv.z;
-    gl_PointSize = uSize * (320.0 / max(dist, 0.1));
+    float dist = max(-mv.z, 0.05);
+    gl_PointSize = clamp(uSize * uPixelScale / dist, 1.0, 24.0);
     // Motes are only visible when lit from the side, so fade with distance and
     // give each one its own brightness.
     vFade = (0.35 + 0.65 * aSeed.x) * clamp(1.0 - dist / 26.0, 0.0, 1.0);
@@ -81,7 +100,8 @@ export class Dust {
     this.material = new THREE.ShaderMaterial({
       uniforms: {
         uTime: { value: 0 },
-        uSize: { value: size * 100 },
+        uSize: { value: size },
+        uPixelScale: particleGlobals.uPixelScale,
         uMin: { value: min },
         uSpan: { value: span },
         uDrift: { value: drift ?? new THREE.Vector3(0.02, 0.03, 0.01) },
@@ -266,7 +286,7 @@ const STEAM_FRAG = /* glsl */ `
 
 export class Steam {
   /** `sources` is a list of world positions - manholes, vents, chimney pots. */
-  constructor({ sources, perSource = 20, height = 5.5, color = '#c9d4dc', size = 1.5, opacity = 0.42 }) {
+  constructor({ sources, perSource = 20, height = 5.5, color = '#c9d4dc', size = 0.8, opacity = 0.42 }) {
     const count = sources.length * perSource;
     const geo = instancedQuad(1, 1, count);
     const origins = new Float32Array(count * 3);

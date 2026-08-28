@@ -8,7 +8,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview --port 4173",
-    "budget": "node scripts/check-budgets.mjs"
+    "budget": "node scripts/check-budgets.mjs",
+    "decoders": "node scripts/copy-decoders.mjs",
+    "verify": "npm run build && npm run budget"
   },
   "dependencies": {
     "@sparkjsdev/spark": "^2.1.0",

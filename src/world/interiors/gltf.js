@@ -5,6 +5,7 @@ import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { BUDGETS } from '../../core/budgets.js';
 import { disposeSubtree } from '../../util/dispose.js';
+import { LAYER } from '../../core/budgets.js';
 
 /**
  * The `gltf` interior strategy (Task 0.5 / Step 4).
@@ -29,7 +30,6 @@ export function getGltfLoader(renderer) {
 
   const draco = new DRACOLoader();
   draco.setDecoderPath(local ? LOCAL_DRACO : GSTATIC_DRACO);
-  draco.setDecoderConfig({ type: 'js' });
   loader.setDRACOLoader(draco);
 
   if (renderer) {
@@ -100,6 +100,15 @@ export class GltfInterior {
 
     this.root.add(model);
     this.model = model;
+
+    // Lights that came with the model are confined to the room (see LAYER).
+    model.traverse((o) => {
+      o.layers.enable(LAYER.INTERIOR_LIGHT);
+      if (o.isLight) {
+        o.userData.baseIntensity = o.intensity;
+        o.layers.set(LAYER.INTERIOR_LIGHT);
+      }
+    });
 
     if (gltf.animations?.length) {
       this._mixer = new THREE.AnimationMixer(model);

@@ -32,8 +32,13 @@ export class CubemapInterior {
     const [w, h, d] = spec.size ?? spec.recipe?.size ?? [4.2, 2.9, 4.6];
     this.size = [w, h, d];
 
-    const cube = spec.src
-      ? await loadCubeFaces(spec.src, spec.faces)
+    // NOTE: deliberately `cubeSrc`, not `src`. When this strategy is reached as
+    // a FALLBACK from gltf/splat/video, `spec.src` still holds that rung's file
+    // path - treating it as a cubemap directory just fails a second time for
+    // the wrong reason. A cubemap only loads from disk if it was given its own
+    // directory; otherwise it bakes from the recipe, which cannot fail.
+    const cube = spec.cubeSrc
+      ? await loadCubeFaces(spec.cubeSrc, spec.faces)
       : this._bake(spec.recipe, [w, h, d]);
 
     // The box sits with its front face at the doorway, like every interior.
@@ -101,8 +106,12 @@ export class CubemapInterior {
     temp.setFocused(true);
     scene.add(temp.root);
 
-    // A little fill so the bake is not pitch black outside the practicals.
-    const fill = new THREE.HemisphereLight(0x40342a, 0x120e0a, 0.55);
+    /**
+     * Fill for the bake. Generous on purpose: a baked cubemap is the ONLY
+     * lighting that room will ever have, so anything the bake loses is lost
+     * permanently - and there is no runtime cost at all to a brighter capture.
+     */
+    const fill = new THREE.HemisphereLight(0x6a5842, 0x2a2018, 1.6);
     scene.add(fill);
 
     const target = new THREE.WebGLCubeRenderTarget(resolution, {

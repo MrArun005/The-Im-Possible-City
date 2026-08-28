@@ -13,8 +13,8 @@ export const GradeShader = {
     uSaturation: { value: 1.0 },
     uContrast: { value: 1.06 },
     uVignette: { value: 1.0 },
-    uGrain: { value: 0.035 },
-    uChromatic: { value: 0.0012 },
+    uGrain: { value: 0.016 },
+    uChromatic: { value: 0.0005 },
     uTime: { value: 0 },
     uFade: { value: 0.0 },         // 1 = full black, used for district cuts
     uFadeColor: { value: null },
@@ -94,9 +94,11 @@ export const GradeShader = {
       float vig = smoothstep(0.95, 0.22, r2 * 1.85);
       color *= mix(1.0, vig, uVignette);
 
-      // Film grain, slightly stronger in the shadows where film actually grains.
+      // Film grain, a little stronger in the shadows where film actually grains
+      // - but only a little. A night city is mostly shadow, so weighting grain
+      // hard toward the darks turns the whole frame into noise.
       float grain = hash(uv * vec2(1024.0 * uAspect, 1024.0) + fract(uTime) * 91.7) - 0.5;
-      color += grain * uGrain * (1.25 - luma);
+      color += grain * uGrain * (0.7 + 0.5 * (1.0 - luma));
 
       color = max(color, vec3(0.0));
       color = mix(color, uFadeColor, uFade);

@@ -256,9 +256,9 @@ export class Door {
       toneMapped: false,
       opacity: 0,
     });
-    const ground = new THREE.Mesh(new THREE.PlaneGeometry(width * 3.2, 3.4), groundMat);
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(width * 2.6, 2.8), groundMat);
     ground.rotation.x = -Math.PI / 2;
-    ground.position.set(0, 0.02, 1.5);
+    ground.position.set(0, 0.02, 1.3);
     ground.renderOrder = 3;
     this.root.add(ground);
 
@@ -272,8 +272,14 @@ export class Door {
       opacity: 0,
       side: THREE.DoubleSide,
     });
-    const haze = new THREE.Mesh(new THREE.PlaneGeometry(width * 1.9, height * 1.5), hazeMat);
-    haze.position.set(0, height * 0.5, 0.14);
+    /**
+     * The airborne glow at the mouth of the doorway. It has to stay SMALL and
+     * FAINT: this is a big additive quad a metre in front of the reveal, and at
+     * arm's length an over-sized one fills the screen with orange and hides the
+     * very room it is supposed to be advertising. Learned the hard way.
+     */
+    const haze = new THREE.Mesh(new THREE.PlaneGeometry(width * 1.15, height * 0.95), hazeMat);
+    haze.position.set(0, height * 0.48, 0.1);
     haze.renderOrder = 3;
     this.root.add(haze);
 
@@ -422,8 +428,9 @@ export class Door {
     const s = this.spill;
     // The spill breathes slightly - firelight, not a spotlight.
     const flicker = 0.9 + 0.1 * Math.sin(this._time * 6.1) * Math.sin(this._time * 2.3);
-    s.groundMat.opacity = s.target * 0.5 * flicker;
-    s.hazeMat.opacity = s.target * 0.34 * flicker;
+    // The pool on the pavement can be generous; the quad in the air cannot.
+    s.groundMat.opacity = s.target * 0.42 * flicker;
+    s.hazeMat.opacity = s.target * 0.1 * flicker;
     s.ground.visible = s.target > 0.01;
     s.haze.visible = s.target > 0.01;
     this.interior?.update?.(dt, ctx);

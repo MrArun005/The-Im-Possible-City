@@ -157,7 +157,7 @@ export class DistrictPortalInterior {
         perSource: Math.max(8, Math.round(this.ctx.quality.steamPuffs / 6)),
         height: 7,
         color: '#9fb0c4',
-        size: 2.4,
+        size: 1.2,
         opacity: 0.3,
       });
       this.root.add(this._steam.mesh);

@@ -47,8 +47,8 @@ export class PostFX {
     this.grade.material.uniforms.uLift.value = new THREE.Color(0, 0, 0);
     this.grade.material.uniforms.uFadeColor.value = new THREE.Color(0, 0, 0);
     this.grade.material.uniforms.uExposure.value = EXPOSURE;
-    this.grade.material.uniforms.uGrain.value = quality.grain ? 0.035 : 0;
-    this.grade.material.uniforms.uChromatic.value = quality.chromatic ? 0.0012 : 0;
+    this.grade.material.uniforms.uGrain.value = quality.grain ? 0.016 : 0;
+    this.grade.material.uniforms.uChromatic.value = quality.chromatic ? 0.0005 : 0;
     this.grade.renderToScreen = true;
     this.composer.addPass(this.grade);
 

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { buildInstanced, GeometryBuilder } from '../gfx/instancing.js';
+import { livingWindowMaterial, seedWindowAttributes } from '../gfx/materials.js';
 import { makeRng } from '../util/rng.js';
 import { disposeSubtree } from '../util/dispose.js';
 import { BUDGETS } from '../core/budgets.js';
@@ -51,6 +52,7 @@ export class CityGrid {
     this.rng = makeRng(theme.seed ?? 1890);
 
     this.cells = [];              // [row][col] = { kind, char, centre }
+    this._windowRects = [];       // every window in the district, world space
     this.doorAnchors = [];        // where Door components attach
     this.sidewalkPaths = [];      // CatmullRomCurve3, closed, for pedestrians
     this.roadPaths = [];          // { curve, axis, direction }
@@ -68,6 +70,9 @@ export class CityGrid {
     this._buildSidewalks();
     this._buildBuildings();
     this._buildDoorBuildings();
+    // Windows last: both instanced lots and unique door buildings contribute
+    // rects, and they all end up in the same single draw call.
+    this._buildWindows();
     this.decorateSidewalk();
     this._buildPaths();
     this._countTriangles();
@@ -236,7 +241,7 @@ export class CityGrid {
     const archetypes = this.theme.archetypes ?? [];
     if (!archetypes.length) return;
 
-    const perArchetype = archetypes.map(() => ({ walls: [], trim: [], windows: [] }));
+    const perArchetype = archetypes.map(() => []);
 
     for (let r = 0; r < this.rows; r++) {
       for (let c = 0; c < this.cols; c++) {
@@ -250,54 +255,99 @@ export class CityGrid {
         const pick = this.rng.int(0, archetypes.length - 1);
         const arch = archetypes[pick];
         const heightScale = this.rng.range(arch.minScale ?? 0.9, arch.maxScale ?? 1.35);
-        const tint = new THREE.Color(arch.tint ?? 0xffffff)
-          .offsetHSL(this.rng.range(-0.02, 0.02), this.rng.range(-0.04, 0.04), this.rng.range(-0.07, 0.07));
+        // Slight hue shift per instance - this is what stops an instanced
+        // street from looking stamped out of one mould.
+        const tint = new THREE.Color(arch.tint ?? 0xffffff).offsetHSL(
+          this.rng.range(-0.02, 0.02),
+          this.rng.range(-0.05, 0.05),
+          this.rng.range(-0.08, 0.08)
+        );
 
-        // Lots are deeper than they are wide: buildings sit on the road edge.
-        const inset = (this.tile / 2) - (arch.depth ?? 6) / 2 - (this.theme.sidewalkWidth ?? 2.6);
+        // Archetypes are authored with their FACADE at local z=0, extending
+        // back into -Z, so the placement point is the facade plane itself:
+        // the inner edge of the sidewalk.
+        const inset = this.tile / 2 - (this.theme.sidewalkWidth ?? 2.6);
         const dir = FACING_VECTORS[facing];
-        const position = [
-          cell.centre.x + dir[0] * inset,
-          0,
-          cell.centre.z + dir[1] * inset,
-        ];
+        const position = [cell.centre.x + dir[0] * inset, 0, cell.centre.z + dir[1] * inset];
         const rotationY = FACING_ANGLES[facing];
 
-        const placement = {
+        perArchetype[pick].push({
           position,
           rotationY,
           scale: [1, heightScale, 1],
           color: tint.getHex(),
-        };
-        perArchetype[pick].walls.push(placement);
-        perArchetype[pick].trim.push(placement);
-        perArchetype[pick].windows.push(placement);
+        });
+
+        // Windows are collected globally, not per archetype - see below.
+        if (arch.windows) {
+          this._collectWindows(arch.windows(heightScale), position, rotationY);
+        }
         cell.building = { archetype: pick, heightScale, facing, position, rotationY };
       }
     }
 
     archetypes.forEach((arch, i) => {
+      const placements = perArchetype[i];
+      if (!placements.length) return;
       const slots = arch.geometry();
-      const bucket = perArchetype[i];
-      if (!bucket.walls.length) return;
-
       for (const [slotName, geo] of Object.entries(slots)) {
         const material = arch.materials[slotName];
         if (!material) continue;
-        const mesh = buildInstanced(geo, material, bucket.walls, {
+        const mesh = buildInstanced(geo, material, placements, {
           castShadow: slotName === 'walls',
           receiveShadow: true,
         });
         mesh.name = `building:${arch.name}:${slotName}`;
-        // Windows must not tint with the wall colour, so drop instanceColor.
-        if (slotName === 'windows' && mesh.instanceColor) {
-          mesh.instanceColor = null;
-          this.windowMeshes.push(mesh);
-        }
         this.root.add(mesh);
-        if (arch.seedWindows && slotName === 'windows') arch.seedWindows(mesh, this.rng);
       }
     });
+
+  }
+
+  /** Transforms an archetype's local window rects into world placements. */
+  _collectWindows(rects, origin, rotationY) {
+    const cos = Math.cos(rotationY);
+    const sin = Math.sin(rotationY);
+    for (const w of rects) {
+      const [x, y, z] = w.position;
+      this._windowRects.push({
+        position: [
+          origin[0] + x * cos + z * sin,
+          y,
+          origin[2] - x * sin + z * cos,
+        ],
+        rotationY: rotationY + (w.rotationY ?? 0),
+        scale: [w.size[0], w.size[1], 1],
+        lit: w.lit ?? null,
+      });
+    }
+  }
+
+  /**
+   * Living windows (Task 5.2). EVERY window in the district - London sashes and
+   * Manhattan towers alike - is one instance in one InstancedMesh sharing one
+   * emissive atlas. Per-instance UV offsets decide which windows are lit and
+   * how brightly, so an entire skyline of individually-lit rooms costs a single
+   * draw call. This is the cheapest "alive" in the whole project.
+   */
+  _buildWindows() {
+    const rects = this._windowRects ?? [];
+    if (!rects.length) return;
+
+    const atlas = this.theme.windowAtlas();
+    const material = livingWindowMaterial(atlas, { cells: 4 });
+    const mesh = buildInstanced(new THREE.PlaneGeometry(1, 1), material, rects);
+    mesh.name = 'windows';
+    if (mesh.instanceColor) mesh.instanceColor = null;   // glow comes from aGlow
+    seedWindowAttributes(mesh, this.rng, {
+      cells: 4,
+      litChance: this.theme.windowLitChance ?? 0.55,
+      maxGlow: this.theme.windowMaxGlow ?? 1.6,
+      hints: rects.map((r) => r.lit),
+    });
+    this.root.add(mesh);
+    this.windowMeshes.push(mesh);
+    this.windowMaterial = material;
   }
 
   /** Door lots get a unique, non-instanced building so a Door can sit in it. */
@@ -319,8 +369,7 @@ export class CityGrid {
 
         const group = built.group ?? built;
         const dir = FACING_VECTORS[facing];
-        const depth = built.depth ?? 6;
-        const inset = (this.tile / 2) - depth / 2 - (this.theme.sidewalkWidth ?? 2.6);
+        const inset = this.tile / 2 - (this.theme.sidewalkWidth ?? 2.6);
         group.position.set(cell.centre.x + dir[0] * inset, 0, cell.centre.z + dir[1] * inset);
         group.rotation.y = FACING_ANGLES[facing];
         group.updateMatrixWorld(true);
@@ -338,7 +387,9 @@ export class CityGrid {
             cell,
           });
         }
-        if (built.windows) this.windowMeshes.push(...built.windows);
+        if (built.windowRects) {
+          this._collectWindows(built.windowRects, group.position.toArray(), group.rotation.y);
+        }
       }
     }
   }

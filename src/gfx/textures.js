@@ -35,7 +35,7 @@ export function cachedCount() { return cache.size; }
 // ---------------------------------------------------------------- masonry
 
 /** London brick: sooty, uneven, with mortar that has seen a hundred winters. */
-function brickCanvas({ size = 512, base = '#3a2b26', mortar = '#4a443e', seed = 7 } = {}) {
+function brickCanvas({ size = 512, base = '#8a5c48', mortar = '#a09488', seed = 7 } = {}) {
   const { canvas, ctx } = makeCanvas(size);
   const rng = makeRng(seed);
   fill(ctx, mortar, size, size);
@@ -51,26 +51,29 @@ function brickCanvas({ size = 512, base = '#3a2b26', mortar = '#4a443e', seed = 
       const shade = 0.72 + rng() * 0.5;
       const tinted = c.clone().multiplyScalar(shade);
       // A few bricks are burnt darker or a warmer red - reads as hand-laid.
-      if (rng.chance(0.07)) tinted.lerp(new THREE.Color('#6b3226'), 0.4);
+      if (rng.chance(0.07)) tinted.lerp(new THREE.Color('#8a4a38'), 0.35);
       if (rng.chance(0.05)) tinted.multiplyScalar(0.55);
       ctx.fillStyle = `#${tinted.getHexString()}`;
       ctx.fillRect(x + offset + 1.2, r * bh + 1.2, bw - 2.4, bh - 2.4);
     }
   }
 
-  splotches(ctx, size, size, { count: 26, radius: size * 0.16, color: 'rgba(8,8,10,0.22)' });
-  soot(ctx, size, size, 0.42);
-  grain(ctx, size, size, 18);
+  splotches(ctx, size, size, { count: 26, radius: size * 0.16, color: 'rgba(8,8,10,0.16)' });
+  soot(ctx, size, size, 0.24);
+  grain(ctx, size, size, 16);
   return canvas;
 }
 
 export const brick = (variant = 0) => {
+  // Real fired brick sits around 0.3 albedo; these used to be near 0.04, which
+  // is why the night city rendered as a black rectangle. Lighting darkens a
+  // surface - the texture should not do the lighting's job for it.
   const palettes = [
-    { base: '#3a2b26', mortar: '#4a443e' },
-    { base: '#4a3128', mortar: '#514a41' },
-    { base: '#2f2a2c', mortar: '#403c39' },
-    { base: '#503a2c', mortar: '#59503f' },
-    { base: '#33302f', mortar: '#474441' },
+    { base: '#7c6154', mortar: '#9a938a' },   // London stock, sooted
+    { base: '#8a6250', mortar: '#a09890' },   // warmer red
+    { base: '#6e6866', mortar: '#8c8884' },   // grey stock
+    { base: '#8e7258', mortar: '#a49c8c' },   // yellow-brown
+    { base: '#787270', mortar: '#928c88' },   // engineering brick
   ];
   const p = palettes[variant % palettes.length];
   return texture(`brick-${variant}`, () => brickCanvas({ ...p, seed: 7 + variant * 13 }), {
@@ -97,21 +100,21 @@ export const stone = (variant = 0) =>
     const size = 512;
     const { canvas, ctx } = makeCanvas(size);
     const rng = makeRng(91 + variant * 7);
-    fill(ctx, ['#4a4741', '#524a42', '#3f3d3a'][variant % 3], size, size);
+    fill(ctx, ['#8e8a80', '#988e80', '#807c76'][variant % 3], size, size);
     const rows = 7;
     const bh = size / rows;
     for (let r = 0; r < rows; r++) {
       let x = -rng() * 60;
       while (x < size) {
         const bw = size / (2.2 + rng() * 1.6);
-        ctx.fillStyle = `rgba(${20 + rng() * 40 | 0},${20 + rng() * 36 | 0},${18 + rng() * 32 | 0},0.5)`;
+        ctx.fillStyle = `rgba(${96 + rng() * 52 | 0},${92 + rng() * 48 | 0},${84 + rng() * 44 | 0},0.55)`;
         ctx.fillRect(x + 2, r * bh + 2, bw - 4, bh - 4);
         x += bw;
       }
     }
-    splotches(ctx, size, size, { count: 34, radius: size * 0.1, color: 'rgba(0,0,0,0.2)' });
-    soot(ctx, size, size, 0.3);
-    grain(ctx, size, size, 15);
+    splotches(ctx, size, size, { count: 34, radius: size * 0.1, color: 'rgba(0,0,0,0.16)' });
+    soot(ctx, size, size, 0.2);
+    grain(ctx, size, size, 14);
     return canvas;
   });
 
@@ -151,32 +154,32 @@ export const cobbleAlbedo = () =>
       const size = 512;
       const { canvas, ctx } = makeCanvas(size);
       const h = cobbleHeight(size);
-      fill(ctx, '#22201f', size, size);
-      ctx.globalAlpha = 0.55;
+      fill(ctx, '#4e4a45', size, size);
+      ctx.globalAlpha = 0.3;
       ctx.drawImage(h.canvas, 0, 0);
       ctx.globalAlpha = 1;
       // Wet-dark tint plus the odd pale stone.
-      splotches(ctx, size, size, { count: 30, radius: size * 0.12, color: 'rgba(10,12,14,0.4)' });
-      splotches(ctx, size, size, { count: 12, radius: size * 0.05, color: 'rgba(150,145,135,0.12)' });
-      grain(ctx, size, size, 16);
+      splotches(ctx, size, size, { count: 30, radius: size * 0.12, color: 'rgba(20,22,26,0.3)' });
+      splotches(ctx, size, size, { count: 14, radius: size * 0.05, color: 'rgba(178,172,160,0.16)' });
+      grain(ctx, size, size, 14);
       return canvas;
     },
-    { repeat: [14, 14], aniso: 8 }
+    { repeat: [56, 56], aniso: 8 }
   );
 
 export const cobbleNormal = () =>
   texture('cobble-n', () => {
     const size = 512;
     const h = cobbleHeight(size);
-    return heightToNormal(h.ctx, size, size, 2.6);
-  }, { srgb: false, repeat: [14, 14], aniso: 8 });
+    return heightToNormal(h.ctx, size, size, 1.25);
+  }, { srgb: false, repeat: [56, 56], aniso: 8 });
 
 export const cobbleRough = () =>
   texture('cobble-r', () => {
     const size = 512;
     const h = cobbleHeight(size);
-    return toGrayscale(h.ctx, size, size, 0.42, 0.95);
-  }, { srgb: false, repeat: [14, 14] });
+    return toGrayscale(h.ctx, size, size, 0.62, 0.99);
+  }, { srgb: false, repeat: [56, 56] });
 
 /** Asphalt for NYC (Task 5.3): darker, finer, with lane paint and patches. */
 function asphaltHeight(size = 512) {
@@ -196,14 +199,14 @@ export const asphaltAlbedo = () =>
   texture('asphalt-a', () => {
     const size = 512;
     const { canvas, ctx } = makeCanvas(size);
-    fill(ctx, '#141518', size, size);
+    fill(ctx, '#2e3236', size, size);
     const h = asphaltHeight(size);
-    ctx.globalAlpha = 0.3;
+    ctx.globalAlpha = 0.34;
     ctx.drawImage(h.canvas, 0, 0);
     ctx.globalAlpha = 1;
     // Tar seams: the detail that says "this road has been repaired".
     const rng = makeRng(31);
-    ctx.strokeStyle = 'rgba(6,6,8,0.85)';
+    ctx.strokeStyle = 'rgba(14,14,18,0.8)';
     for (let i = 0; i < 5; i++) {
       ctx.lineWidth = rng.range(2, 6);
       ctx.beginPath();
@@ -213,14 +216,14 @@ export const asphaltAlbedo = () =>
     }
     grain(ctx, size, size, 12);
     return canvas;
-  }, { repeat: [10, 10], aniso: 8 });
+  }, { repeat: [40, 40], aniso: 8 });
 
 export const asphaltNormal = () =>
   texture('asphalt-n', () => {
     const size = 512;
     const h = asphaltHeight(size);
     return heightToNormal(h.ctx, size, size, 0.8);
-  }, { srgb: false, repeat: [10, 10] });
+  }, { srgb: false, repeat: [40, 40] });
 
 /** Wet-road roughness: streaks and pools where the road holds water. */
 export const wetnessMask = () =>
@@ -231,7 +234,7 @@ export const wetnessMask = () =>
     splotches(ctx, size, size, { count: 46, radius: size * 0.15, color: 'rgba(0,0,0,0.9)' });
     splotches(ctx, size, size, { count: 90, radius: size * 0.05, color: 'rgba(0,0,0,0.6)' });
     return canvas;
-  }, { srgb: false, repeat: [5, 5] });
+  }, { srgb: false, repeat: [22, 22] });
 
 /** Puddle decal (Task 1.4) - an alpha shape, laid flat on the cobbles. */
 export const puddleDecal = () =>
@@ -370,11 +373,11 @@ export const wood = (variant = 0) =>
     const size = 512;
     const { canvas, ctx } = makeCanvas(size);
     const rng = makeRng(600 + variant * 31);
-    const base = ['#2a1a12', '#3b2416', '#1e1a18', '#4a2f1c'][variant % 4];
+    const base = ['#5c3d28', '#6e4630', '#42382f', '#7a512c'][variant % 4];
     fill(ctx, base, size, size);
     for (let i = 0; i < 220; i++) {
       const y = rng() * size;
-      ctx.strokeStyle = `rgba(${rng() * 40 + 10 | 0},${rng() * 26 | 0},0,${rng() * 0.3})`;
+      ctx.strokeStyle = `rgba(${rng() * 60 + 20 | 0},${rng() * 40 + 8 | 0},${rng() * 16 | 0},${rng() * 0.28})`;
       ctx.lineWidth = rng.range(0.6, 3);
       ctx.beginPath();
       ctx.moveTo(0, y);
@@ -383,7 +386,7 @@ export const wood = (variant = 0) =>
       }
       ctx.stroke();
     }
-    splotches(ctx, size, size, { count: 8, radius: size * 0.08, color: 'rgba(0,0,0,0.35)' });
+    splotches(ctx, size, size, { count: 8, radius: size * 0.08, color: 'rgba(0,0,0,0.24)' });
     grain(ctx, size, size, 10);
     return canvas;
   });
@@ -401,8 +404,8 @@ export const wallpaper = (variant = 0) =>
   texture(`wallpaper-${variant}`, () => {
     const size = 512;
     const { canvas, ctx } = makeCanvas(size);
-    const bases = ['#1d2a20', '#2a1618', '#22201a', '#1a1f2a'];
-    const marks = ['#3d5140', '#4a2529', '#3a352a', '#2c3550'];
+    const bases = ['#35513c', '#54282c', '#413b2e', '#2e3550'];
+    const marks = ['#6e8a6e', '#8a4a4e', '#6a6250', '#54608a'];
     fill(ctx, bases[variant % 4], size, size);
     ctx.strokeStyle = marks[variant % 4];
     ctx.fillStyle = marks[variant % 4];
@@ -426,7 +429,7 @@ export const wallpaper = (variant = 0) =>
       }
     }
     ctx.globalAlpha = 1;
-    soot(ctx, size, size, 0.5);
+    soot(ctx, size, size, 0.28);
     grain(ctx, size, size, 12);
     return canvas;
   }, { repeat: [3, 2] });
@@ -435,12 +438,12 @@ export const rug = () =>
   texture('rug', () => {
     const size = 256;
     const { canvas, ctx } = makeCanvas(size);
-    fill(ctx, '#4a1f1c', size, size);
-    ctx.strokeStyle = '#8a5a2a';
+    fill(ctx, '#7c3630', size, size);
+    ctx.strokeStyle = '#c09248';
     ctx.lineWidth = 5;
     ctx.strokeRect(14, 14, size - 28, size - 28);
     ctx.strokeRect(30, 30, size - 60, size - 60);
-    ctx.fillStyle = '#2a3a44';
+    ctx.fillStyle = '#40606e';
     for (let y = 48; y < size - 48; y += 34) {
       for (let x = 48; x < size - 48; x += 34) {
         ctx.beginPath();
@@ -448,7 +451,7 @@ export const rug = () =>
         ctx.fill();
       }
     }
-    soot(ctx, size, size, 0.55);
+    soot(ctx, size, size, 0.3);
     grain(ctx, size, size, 16);
     return canvas;
   });
@@ -459,10 +462,10 @@ export const books = () =>
     const size = 512;
     const { canvas, ctx } = makeCanvas(size);
     const rng = makeRng(1895);
-    fill(ctx, '#120d0a', size, size);
+    fill(ctx, '#241a14', size, size);
     const shelves = 6;
     const sh = size / shelves;
-    const spines = ['#5a2a22', '#2a3a2a', '#3a2f4a', '#4a3a1a', '#2a2a35', '#5a4a2a'];
+    const spines = ['#8e4034', '#3f5a3f', '#54446a', '#6e5628', '#3c3c50', '#8a6e3c'];
     for (let s = 0; s < shelves; s++) {
       let x = 4;
       while (x < size - 6) {
@@ -477,10 +480,10 @@ export const books = () =>
         }
         x += w + rng.range(0.5, 2.5);
       }
-      ctx.fillStyle = '#0b0806';
+      ctx.fillStyle = '#150f0b';
       ctx.fillRect(0, (s + 1) * sh - 6, size, 7);
     }
-    soot(ctx, size, size, 0.55);
+    soot(ctx, size, size, 0.32);
     return canvas;
   });
 

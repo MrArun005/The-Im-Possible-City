@@ -23,17 +23,30 @@ export class StatsHud {
     this.el.hidden = !this.visible;
   }
 
+  /**
+   * Returns a truthy fps only on the frames where a new measurement landed, so
+   * the caller knows when to refresh the expensive extras (light counts and so
+   * on). Painting happens in `flush()` AFTER those extras are written - painting
+   * inside here showed last-half-second's numbers, which made the budget meter
+   * lie about exactly the things it exists to police.
+   */
   sample(dt) {
     this.frames++;
     this.accum += dt;
+    this._fresh = false;
     if (this.accum >= 0.5) {
       this.fps = Math.round(this.frames / this.accum);
       if (this.accum > 0.4 && this.fps < this.worstFps) this.worstFps = this.fps;
       this.frames = 0;
       this.accum = 0;
-      if (this.visible) this._paint();
+      this._fresh = true;
+      return this.fps;
     }
-    return this.fps;
+    return 0;
+  }
+
+  flush() {
+    if (this._fresh && this.visible) this._paint();
   }
 
   set(key, value) { this.extra[key] = value; }

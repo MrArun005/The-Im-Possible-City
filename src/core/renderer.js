@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { LAYER } from './budgets.js';
 
 /**
  * WebGLRenderer setup, per the implementation instructions Step 1.
@@ -29,7 +30,7 @@ export function createRenderer(canvas, quality) {
   renderer.toneMappingExposure = EXPOSURE;
   renderer.autoClearStencil = true;
   renderer.shadowMap.enabled = quality.shadows;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.info.autoReset = false;
 
   return renderer;
@@ -47,6 +48,9 @@ export function createCamera() {
     200
   );
   camera.position.set(0, EYE_HEIGHT, 4);
+  // Interior meshes live on layer 1 as well as 0 so their own lights can find
+  // them; the camera has to be told to render that layer.
+  camera.layers.enable(LAYER.INTERIOR_LIGHT);
   return camera;
 }
 

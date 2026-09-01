@@ -112,7 +112,7 @@ def path(t):                                   # t in [0,1) -> (z,y,tangent angl
         a=-pi/2-(s/TR); return ZR+cos(a)*TR, TR+sin(a)*TR, a-pi/2
     s-=pi*TR
     if s<Ls:
-        z=ZR+s; sag=0.055*max(0.0,sin(pi*((z-ZR)/Ls)*3.0))
+        z=ZR+s; sag=0.095*max(0.0,sin(pi*((z-ZR)/Ls)*3.0))   # catenary droop
         return z, 2*TR-sag, 0.0
     s-=Ls
     a=pi/2-(s/TR); return ZF+cos(a)*TR, TR+sin(a)*TR, a-pi/2
@@ -203,6 +203,14 @@ cyl(0.29,0.15,'y',HULL,XF((-0.62,1.92,1.44)),seg=22)
 for k in range(3): box(0.13,0.14,0.10,LEN_,XF((-0.62+(k-1)*0.26,2.00,1.72)))  # periscopes
 box(2.90,0.14,1.55,HULL,XF((0,1.90,-2.05)))                    # engine deck
 for k in range(9): box(2.70,0.07,0.10,DRK,XF((0,1.98,-2.72+k*0.17)))
+box(0.06,0.10,1.05,STL,XF((-1.88,1.62,-1.30)))                 # shovel shaft
+box(0.05,0.22,0.30,STL,XF((-1.88,1.62,-0.72)))                 # shovel blade
+for _c in (-1.62,-0.98):
+    box(0.09,0.13,0.09,DRK,XF((-1.88,1.62,_c)))
+box(0.06,0.09,0.92,STL,XF((1.88,1.62,-1.45)))                  # pick shaft
+box(0.05,0.26,0.10,STL,XF((1.88,1.66,-0.99)))                  # pick head
+for _c in (-1.72,-1.18):
+    box(0.09,0.13,0.09,DRK,XF((1.88,1.62,_c)))
 box(3.10,0.40,0.30,DRK,XF((0,1.72,-3.44)))                     # rear plate
 for sgn in (-1,1):
     cyl(0.30,0.34,'z',DRK,XF((sgn*1.02,1.46,-3.56)),seg=18)    # exhausts
@@ -236,12 +244,18 @@ for _s in (-1,1):                                              # grab rails, tur
             box(0.06,0.16,0.06,STL,T((_s*1.76,TY+0.54,_z+_e))) # rail posts
 # gun mantlet + canvas boot -> elevates with the gun
 setpart("Gun")
-box(0.94,0.70,0.66,TUR,T((0,TY+0.42,1.42)))
+prism(cham([(-0.52,-0.40),(0.52,-0.40),(0.60,0.02),(0.40,0.38),(-0.40,0.38),(-0.60,0.02)],0.04),
+      'z',0.66,TUR,T((0,TY+0.42,1.42)),taper=0.74)             # shaped mantlet shield
 box(1.12,0.80,0.26,CNV,T((0,TY+0.42,1.74)))
 BY=TY+0.42
 cyl(0.061,5.10,'z',STL,T((0,BY,1.94+2.55)),seg=22)             # 120mm tube
 cyl(0.107,2.60,'z',TUR,T((0,BY,2.02+1.30)),seg=22)             # thermal sleeve
+cyl(0.158,0.92,'z',TUR,T((0,BY,1.94+1.95)),seg=24)             # BORE EVACUATOR
+cyl(0.168,0.055,'z',DRK,T((0,BY,1.94+1.52)),seg=24)            # evacuator bands
+cyl(0.168,0.055,'z',DRK,T((0,BY,1.94+2.38)),seg=24)
 for k in range(5): box(0.235,0.030,0.035,DRK,T((0,BY+0.104,1.30+k*0.52)))
+cyl(0.038,0.95,'z',STL,T((-0.34,BY-0.06,1.94+0.75)),seg=14)    # coaxial MG barrel
+box(0.16,0.16,0.26,DRK,T((-0.34,BY-0.06,1.62)))                # coax port shroud
 cyl(0.075,0.36,'z',STL,T((0,BY,1.94+4.95)),seg=22)             # muzzle
 cyl(0.086,0.09,'z',DRK,T((0,BY,1.94+4.75)),seg=22)
 setpart("Turret")

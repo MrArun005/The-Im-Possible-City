@@ -61,14 +61,19 @@ dx=g.nodes.new('ShaderNodeMath'); dx.operation='SUBTRACT'; dx.inputs[1].default_
 g.links.new(ax.outputs['Value'],dx.inputs[0])
 sq=g.nodes.new('ShaderNodeMath'); sq.operation='POWER'; sq.inputs[1].default_value=2.0
 g.links.new(dx.outputs['Value'],sq.inputs[0])
-nb=g.nodes.new('ShaderNodeMath'); nb.operation='MULTIPLY'; nb.inputs[1].default_value=-7.4
+nb=g.nodes.new('ShaderNodeMath'); nb.operation='MULTIPLY'; nb.inputs[1].default_value=-5.0
 g.links.new(sq.outputs['Value'],nb.inputs[0])
 ex=g.nodes.new('ShaderNodeMath'); ex.operation='POWER'; ex.inputs[0].default_value=2.718281828
 g.links.new(nb.outputs['Value'],ex.inputs[1])
 # only behind the vehicle (it faces -Y, so ruts trail to +Y)
+# the vehicle is sitting IN its own ruts, so they run the full length of frame;
+# gating them to 'behind only' hid them whenever the camera was ahead of the hull
 beh=g.nodes.new('ShaderNodeMapRange')
-beh.inputs['From Min'].default_value=0.4; beh.inputs['From Max'].default_value=3.0
-g.links.new(sep.outputs['Y'],beh.inputs['Value'])
+beh.inputs['From Min'].default_value=26.0; beh.inputs['From Max'].default_value=4.0
+beh.inputs['To Min'].default_value=0.25;   beh.inputs['To Max'].default_value=1.0
+aby=g.nodes.new('ShaderNodeMath'); aby.operation='ABSOLUTE'
+g.links.new(sep.outputs['Y'],aby.inputs[0])
+g.links.new(aby.outputs['Value'],beh.inputs['Value'])
 rut=g.nodes.new('ShaderNodeMath'); rut.operation='MULTIPLY'
 g.links.new(ex.outputs['Value'],rut.inputs[0]); g.links.new(beh.outputs['Result'],rut.inputs[1])
 # soil colour: two-tone noise, darkened in the ruts

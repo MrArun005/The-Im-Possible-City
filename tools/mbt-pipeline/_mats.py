@@ -1,7 +1,7 @@
 import bpy,math,os
 cos,sin,pi=math.cos,math.sin,math.pi
-WEAR=float(os.environ.get('WEAR','0.17'))
-DUSTY=float(os.environ.get('DUSTY','0.55'))
+WEAR=float(os.environ.get('WEAR','0.22'))
+DUSTY=float(os.environ.get('DUSTY','0.60'))
 
 # ---------------------------------------------------------------- materials
 def nodes(name):
@@ -70,7 +70,7 @@ def streak_mask(nt,loc=(-1600,-1500)):
     nz.inputs['Roughness'].default_value=0.72
     nt.links.new(mp.outputs['Vector'],nz.inputs['Vector'])
     sh=nt.nodes.new('ShaderNodeMapRange'); sh.location=(loc[0]+540,loc[1])
-    sh.inputs['From Min'].default_value=0.52; sh.inputs['From Max'].default_value=0.78
+    sh.inputs['From Min'].default_value=0.44; sh.inputs['From Max'].default_value=0.66
     nt.links.new(nz.outputs['Fac'],sh.inputs['Value'])
     # vertical faces only
     sep=nt.nodes.new('ShaderNodeSeparateXYZ'); sep.location=(loc[0]+360,loc[1]-220)
@@ -146,7 +146,7 @@ def dust_and_wear(nt,bsdf,vec,basecol_out,rough_base,dusty=0.55,wear=0.22):
     # edge wear from geometry pointiness
     geo=nt.nodes.new('ShaderNodeNewGeometry'); geo.location=(-1000,-1150)
     pr=nt.nodes.new('ShaderNodeMapRange'); pr.location=(-800,-1150)
-    pr.inputs['From Min'].default_value=0.52; pr.inputs['From Max'].default_value=0.62
+    pr.inputs['From Min'].default_value=0.505; pr.inputs['From Max'].default_value=0.575
     nt.links.new(geo.outputs['Pointiness'],pr.inputs['Value'])
     nzw=noise(nt,vec,22.0,detail=4.0,loc=(-800,-1330))
     wm=nt.nodes.new('ShaderNodeMath'); wm.location=(-600,-1200); wm.operation='MULTIPLY'
@@ -162,8 +162,8 @@ def dust_and_wear(nt,bsdf,vec,basecol_out,rough_base,dusty=0.55,wear=0.22):
     chip.color_ramp.interpolation='CONSTANT'
     ce=chip.color_ramp.elements
     ce[0].position=0.0;  ce[0].color=(0,0,0,1)              # intact paint
-    ce[1].position=0.55; ce[1].color=(0.5,0.5,0.5,1)        # primer showing
-    ce3=ce.new(0.80);    ce3.color=(1,1,1,1)                # bare metal
+    ce[1].position=0.47; ce[1].color=(0.5,0.5,0.5,1)        # primer showing
+    ce3=ce.new(0.74);    ce3.color=(1,1,1,1)                # bare metal
     nt.links.new(wc.outputs['Result'],chip.inputs['Fac'])
     prim=nt.nodes.new('ShaderNodeMixRGB'); prim.location=(-60,-380)
     prim.inputs['Color2'].default_value=(0.052,0.020,0.011,1)   # red-oxide primer
@@ -190,7 +190,7 @@ def dust_and_wear(nt,bsdf,vec,basecol_out,rough_base,dusty=0.55,wear=0.22):
     # gravity streaks darken everything they run over
     stk=streak_mask(nt)
     sm=nt.nodes.new('ShaderNodeMath'); sm.location=(-60,-1200); sm.operation='MULTIPLY'
-    sm.inputs[1].default_value=0.62
+    sm.inputs[1].default_value=0.58
     nt.links.new(stk,sm.inputs[0])
     smix=nt.nodes.new('ShaderNodeMixRGB'); smix.location=(120,-300)
     smix.inputs['Color2'].default_value=(0.030,0.022,0.014,1)   # dark grime

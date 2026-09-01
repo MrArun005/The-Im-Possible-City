@@ -67,10 +67,30 @@ Metrics are triangle-equivalent, so quad and n-gon input is reported honestly.
 }
 ```
 
+## Animation (v9)
+The hierarchy the pipeline emits is enough to rig. `MBT_LINK_PARTS=1` makes the
+generator emit each track link as its own part, `mbtanim.py` keyframes the whole
+vehicle (terrain ride, `θ=d/r` wheels, link scroll, turret/gun servos, recoil),
+`anim.py` renders it and `rig_export.py` writes a single-clip animated GLB:
+
+```bash
+MBT_LINK_PARTS=1 python3 assetpipe.py --generator tankparts:parts_named \
+  --materials tankmats:library --config mbt8.config.json --up Y \
+  --bevel 0.008:2:35 --uv-instance --uv-pack --name MBT9 --out out_v9
+SRC=out_v9/MBT9.glb python3 rig_export.py            # -> out_v9/MBT9_anim.glb
+SRC=out_v9/MBT9.glb NF=120 RES=1152 python3 anim.py  # -> frames_drive/*.png
+FRAMES=frames_drive OUT=MBT_drive.mp4 python3 encode.py
+```
+Every motion is derived in `docs/ANIMATION.md`. Link instancing is also why v9
+packs better than v7 with 166 more objects (29.1 % → 39.5 % atlas, 48.9 → 56.4
+texel/m).
+
 ## Known limits
 - `smart_project` packs poorly on meshes made of many intersecting shells —
-  it is island count, not the packer. The MBT yields 3,756 islands → 17% atlas
-  utilisation. Unify/retopologise before expecting good texel density.
+  it is island count, not the packer. `--uv-instance` recovers most of it
+  (v1 17 % → v9 39.5 %); the rest needs unification/retopology.
+- The rig's procedural materials are keyed to world position; animate from the
+  *baked* GLB (as `anim.py` does), or the camo swims as the vehicle moves.
 - Convex collision is axis-aligned boxes (`--collision hull` gives one true hull).
 - No skeletal rigging; it produces the object hierarchy and pivots you rig from.
 - Baking needs a Principled BSDF; other shader graphs fall back and are reported.

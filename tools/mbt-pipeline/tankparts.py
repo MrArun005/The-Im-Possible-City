@@ -1,4 +1,4 @@
-import numpy as np, zlib, struct, math
+import numpy as np, zlib, struct, math, os
 OUT="/tmp/claude-0/-home-user-The-Im-Possible-City/dfbe3253-b160-58aa-97ef-d68a211a1ad0/scratchpad/"
 cos,sin,pi=math.cos,math.sin,math.pi
 
@@ -118,10 +118,15 @@ def path(t):                                   # t in [0,1) -> (z,y,tangent angl
     a=pi/2-(s/TR); return ZF+cos(a)*TR, TR+sin(a)*TR, a-pi/2
 
 NL=84
+# MBT_LINK_PARTS=1 emits every track link as its own part, so an animation rig can
+# scroll the links around the loop individually.  Off by default: 168 extra objects
+# is pure overhead for a static export.
+LINKPARTS=bool(os.environ.get("MBT_LINK_PARTS"))
 for sgn in (-1,1):
     side="L" if sgn<0 else "R"
     setpart("Track_"+side)
     for k in range(NL):
+        if LINKPARTS: setpart("Link_%s_%02d"%(side,k))
         t=k/NL; z,y,_=path(t)
         z2,y2,_=path((k+1)/NL)
         pit=-math.atan2(y2-y,z2-z)

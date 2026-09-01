@@ -115,7 +115,7 @@ sc.camera=cam
 sc.cycles.samples=int(os.environ.get("SAMP","150"))
 sc.cycles.use_adaptive_sampling=True; sc.cycles.adaptive_threshold=0.015
 sc.cycles.use_denoising=True; sc.cycles.max_bounces=12
-sc.render.resolution_x=1600; sc.render.resolution_y=1000
+sc.render.resolution_x=int(os.environ.get('RX','1600')); sc.render.resolution_y=int(os.environ.get('RY','1000'))
 sc.view_settings.view_transform='AgX'
 sc.view_settings.exposure=float(os.environ.get("EXPO","-5.85"))
 try: sc.view_settings.look='AgX - Medium High Contrast'

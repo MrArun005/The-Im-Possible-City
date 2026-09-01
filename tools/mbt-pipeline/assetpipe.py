@@ -52,6 +52,9 @@ def cli(argv):
     p.add_argument("--config",help="JSON with pivots / hierarchy / collision overrides")
     p.add_argument("--materials",help="python module:function returning {material_name: bpy material} "
                    "- lets a project supply real shaders for the bake")
+    p.add_argument("--save-blend",default=None,
+                   help="also write a .blend of the finished asset (hand-off for "
+                        "animation / lookdev, keeps the live node graphs)")
     p.add_argument("--validate-render",action="store_true")
     p.add_argument("--samples",type=int,default=110)
     return p.parse_args(argv)
@@ -479,13 +482,6 @@ def final_material(A,objs,imgs,orm):
         nt.links.new(tex(orm,(-380,-40)).outputs['Color'],sp.inputs['Color'])
         if "roughness" in imgs: nt.links.new(sp.outputs[1],b.inputs['Roughness'])
         if "metallic" in imgs:  nt.links.new(sp.outputs[2],b.inputs['Metallic'])
-    else:
-        # no ORM (fewer than two data channels baked) -> wire the singles directly,
-        # otherwise a baked map is written to disk but never used by the material
-        if "roughness" in imgs:
-            nt.links.new(tex(imgs["roughness"],(-380,-40)).outputs['Color'],b.inputs['Roughness'])
-        if "metallic" in imgs:
-            nt.links.new(tex(imgs["metallic"],(-380,-200)).outputs['Color'],b.inputs['Metallic'])
     if "normal" in imgs:
         nmn=nt.nodes.new('ShaderNodeNormalMap'); nmn.location=(-90,-360)
         nt.links.new(tex(imgs["normal"],(-380,-360)).outputs['Color'],nmn.inputs['Color'])
@@ -733,6 +729,11 @@ def main(argv):
     rep["uv"]["unique_coverage"]=uv_qa(reps,A.texsize)["utilisation"]
     rep["uv"]["unique_objects"]=len(reps)
     rep["uv"]["instanced_objects"]=len(objs)-len(reps)
+    if A.save_blend:
+        bp=os.path.abspath(A.save_blend)
+        # before LOD/collision so the saved file holds only the authored asset
+        bpy.ops.wm.save_as_mainfile(filepath=bp,copy=True)
+        log("saved blend:",bp)
     lodmap=lods(A,objs)
     cols=collision(A,objs,cfg)
     rep["audit_out"]=audit(objs,"OUT")

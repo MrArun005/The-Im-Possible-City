@@ -1,0 +1,23 @@
+{
+  "pivots": {
+    "Turret": [
+      -0.0675,
+      0.2922,
+      1.86
+    ],
+    "Gun": [
+      0.3195,
+      -1.383,
+      2.28
+    ]
+  },
+  "hierarchy": {
+    "Turret": "Hull",
+    "Gun": "Turret",
+    "*": "Hull"
+  },
+  "collision": [
+    "Hull",
+    "Turret"
+  ]
+}

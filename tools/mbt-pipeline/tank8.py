@@ -66,7 +66,10 @@ def prism(prof,axis,length,m,xf=I,taper=1.0,smooth=False,off=0.0):
             e1=np.array(A[j])-np.array(A[i]); e2=np.array(B[i])-np.array(A[i])
             fn=np.cross(e1,e2); L=np.linalg.norm(fn)
             fn=fn/L if L>1e-12 else np.array([0.,1.,0.]); ni=nj=tuple(fn)
-        tri([A[i],A[j],B[j]],[ni,nj,nj],m); tri([A[i],B[j],B[i]],[ni,nj,ni],m)
+        # side quads must wind OUTWARD to agree with the caps and the radial smooth
+        # normals; the old order was inward, so any consumer rebuilding normals from
+        # winding (a raw OBJ import) received an inside-out solid.
+        tri([A[j],A[i],B[j]],[nj,ni,nj],m); tri([B[j],A[i],B[i]],[nj,ni,ni],m)
 
 def box(sx,sy,sz,m,xf=I):
     prism([(-sz/2,-sy/2),(sz/2,-sy/2),(sz/2,sy/2),(-sz/2,sy/2)],'x',sx,m,xf)
@@ -189,6 +192,13 @@ for _q in range(8):                                            # hatch ring bolt
 for _s in (-1,1):                                              # lifting eyes
     box(0.10,0.16,0.09,STL,XF((_s*1.55,1.99,2.55)))
     box(0.10,0.16,0.09,STL,XF((_s*1.55,1.99,-2.85)))
+# ---- weld beads along the major plate seams
+for _s in (-1,1):
+    box(0.055,0.055,6.80,STL,XF((_s*1.848,1.325,-0.05)))       # sponson underside seam
+    box(0.055,0.055,3.90,STL,XF((_s*1.848,1.905,0.90)))        # deck edge seam
+box(3.68,0.055,0.055,STL,XF((0,1.858,1.02)))                   # glacis / roof seam
+box(3.68,0.055,0.055,STL,XF((0,1.335,3.60)))                   # nose / glacis seam
+box(2.40,0.055,0.055,STL,XF((0,1.905,-3.00)))                  # engine deck rear seam
 cyl(0.29,0.15,'y',HULL,XF((-0.62,1.92,1.44)),seg=22)
 for k in range(3): box(0.13,0.14,0.10,LEN_,XF((-0.62+(k-1)*0.26,2.00,1.72)))  # periscopes
 box(2.90,0.14,1.55,HULL,XF((0,1.90,-2.05)))                    # engine deck
@@ -217,6 +227,13 @@ def T(pos,yaw=0.0,pitch=0.0):
 tp=[(-1.68,-2.46),(1.68,-2.46),(1.68,0.34),(1.44,1.20),(0.56,1.64),
     (-0.56,1.64),(-1.44,1.20),(-1.68,0.34)]
 prism(cham(tp,0.055),'y',TH,TUR,T((0,TY+TH/2,-0.30)),taper=0.94)
+cyl(1.78,0.055,'y',STL,T((0,TY+0.02,-0.30)),seg=30)            # turret ring collar weld
+for _s in (-1,1):                                              # grab rails, turret sides
+    for _k in range(2):
+        _z=-0.55-_k*0.95
+        box(0.07,0.07,0.62,STL,T((_s*1.80,TY+0.62,_z)))        # rail bar
+        for _e in (-0.27,0.27):
+            box(0.06,0.16,0.06,STL,T((_s*1.76,TY+0.54,_z+_e))) # rail posts
 # gun mantlet + canvas boot -> elevates with the gun
 setpart("Gun")
 box(0.94,0.70,0.66,TUR,T((0,TY+0.42,1.42)))

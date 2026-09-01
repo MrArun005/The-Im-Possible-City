@@ -1,8 +1,9 @@
 """Three hero renders from the EXPORTED glb - proves the shipped asset, not the source scene."""
 import bpy, math, os, sys
 from mathutils import Vector, Matrix
-OUT="/tmp/claude-0/-home-user-The-Im-Possible-City/dfbe3253-b160-58aa-97ef-d68a211a1ad0/scratchpad/"
-GLB=OUT+"out_v2/MBT2.glb"
+OUT=os.environ.get("OUT",os.path.dirname(os.path.abspath(__file__))+"/")
+GLB=os.environ.get("GLB")
+if not GLB: raise SystemExit("set GLB=/path/to/asset.glb (optionally OUT=/render/dir/)")
 SHOT=os.environ.get("SHOT","beauty")
 
 CFG={
@@ -10,6 +11,9 @@ CFG={
  "beauty":   ( 15.0,  560.0, (1.00,0.89,0.76), 1.4, -6.95,  8.0, 85.0, 0.95, 1.00),
  "technical":( 46.0,  760.0, (1.00,0.97,0.94), 0.9, -5.90, 24.0, 80.0, 1.00, 1.30),
  "detail":   ( 24.0,  680.0, (1.00,0.92,0.82), 1.2, -5.70, 10.0,135.0, 0.32, 1.15),
+ # steeper camera than the failed beauty pass: avoids the grazing-Fresnel washout
+ "hero":     ( 26.0,  650.0, (1.00,0.93,0.84), 1.1, -5.80, 18.0,105.0, 0.86, 1.20),
+ "hero_low": ( 19.0,  560.0, (1.00,0.90,0.78), 1.3, -5.95, 13.0, 95.0, 0.88, 1.15),
 }
 sel,sen,scol,aero,expo,camel,lens,fit,skystr=CFG[SHOT]
 

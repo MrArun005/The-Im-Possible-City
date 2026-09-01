@@ -31,6 +31,8 @@ def cli(argv):
     p.add_argument("--split",choices=["none","loose","material"],default="none")
     p.add_argument("--weld",type=float,default=0.0006,help="0 disables")
     p.add_argument("--smooth-angle",type=float,default=33.0)
+    p.add_argument("--bevel",default="none",
+                   help="WIDTH:SEGMENTS:ANGLE applied geometrically, e.g. 0.008:2:38")
     p.add_argument("--pivot",choices=["origin","centroid","bbox","bottom"],default="centroid")
     p.add_argument("--root",default=None,help="part name to use as hierarchy root")
     p.add_argument("--uv",choices=["smart","keep","none"],default="smart")
@@ -152,10 +154,13 @@ def audit(objs,label):
 # ----------------------------------------------------------------- geometry prep
 def normalize(A,objs):
     if A.scale!=1.0:
-        for o in objs: o.scale=(A.scale,)*3
+        for o in objs: o.scale=tuple(c*A.scale for c in o.scale)
         select(objs); bpy.ops.object.transform_apply(location=False,rotation=False,scale=True)
     for o in objs:
-        select([o]); bpy.ops.object.transform_apply(location=True,rotation=True,scale=True)
+        if o.data.users>1: o.data=o.data.copy()   # multi-user meshes cannot be applied
+        select([o])
+        try: bpy.ops.object.transform_apply(location=True,rotation=True,scale=True)
+        except Exception as e: log("  transform_apply skipped on %s: %s"%(o.name,e))
 
 def select(objs):
     for o in bpy.data.objects: o.select_set(False)
@@ -189,6 +194,44 @@ def cleanup(A,objs):
         for e in bm.edges:
             if len(e.link_faces)==2:
                 try: e.smooth = e.calc_face_angle() < ang
+                except Exception: e.smooth=False
+            else: e.smooth=False
+        bm.normal_update(); bm.to_mesh(me); bm.free()
+
+def bevel(A,objs):
+    """geometric chamfer, applied BEFORE unwrap so UVs cover the new faces"""
+    if A.bevel.strip()=="none": return
+    w,seg,ang=[float(x) for x in A.bevel.split(":")]
+    before=sum(len(o.data.polygons) for o in objs)
+    for o in objs:
+        md=o.modifiers.new("bevel",'BEVEL')
+        md.width=w; md.segments=int(seg)
+        md.limit_method='ANGLE'; md.angle_limit=math.radians(ang)
+        md.use_clamp_overlap=True
+        md.miter_outer='MITER_ARC'
+        bpy.context.view_layer.objects.active=o
+        try: bpy.ops.object.modifier_apply(modifier="bevel")
+        except Exception as e:
+            log("  bevel failed on %s: %s"%(o.name,e))
+            try: o.modifiers.remove(md)
+            except Exception: pass
+    for o in objs:                        # bevel emits quads -> retriangulate
+        me=o.data
+        bm=bmesh.new(); bm.from_mesh(me)
+        bmesh.ops.triangulate(bm,faces=[f for f in bm.faces if len(f.verts)>3])
+        bm.to_mesh(me); bm.free()
+    after=sum(len(o.data.polygons) for o in objs)
+    log("bevel %.1fmm x%d over %.0f deg: %d -> %d tris (%.2fx)"%(
+        w*1000,int(seg),ang,before,after,after/max(before,1)))
+    # re-mark hard edges: the chamfer introduced new, shallower edges
+    a2=math.radians(A.smooth_angle)
+    for o in objs:
+        me=o.data
+        bm=bmesh.new(); bm.from_mesh(me)
+        for f in bm.faces: f.smooth=True
+        for e in bm.edges:
+            if len(e.link_faces)==2:
+                try: e.smooth = e.calc_face_angle() < a2
                 except Exception: e.smooth=False
             else: e.smooth=False
         bm.normal_update(); bm.to_mesh(me); bm.free()
@@ -255,9 +298,10 @@ def copy_uv0(src,dst):
     return True
 
 def unwrap(A,objs):
-    if A.uv=="none": return False
+    """always returns the objects that own unique UVs (i.e. the bake set)"""
+    if A.uv=="none": return objs
     if A.uv=="keep" and all(o.data.uv_layers for o in objs): 
-        log("keeping existing UVs"); return True
+        log("keeping existing UVs"); return objs
     for o in objs:
         if not o.data.uv_layers: o.data.uv_layers.new(name="UVMap")
     if A.uv_instance:
@@ -357,6 +401,7 @@ def bake_all(A,objs,sc,bake_objs=None):
         im.colorspace_settings.name='Non-Color' if CH[c][1] else 'sRGB'
         imgs[c]=im
     def target(m,im):
+        if not m.node_tree: return
         nt=m.node_tree
         n=nt.nodes.get("BAKE_TARGET") or nt.nodes.new('ShaderNodeTexImage')
         n.name="BAKE_TARGET"; n.image=im; n.location=(1200,400); nt.nodes.active=n
@@ -407,6 +452,9 @@ def pack_orm(A,imgs):
         a=np.empty(len(im.pixels),dtype=np.float32); im.pixels.foreach_get(a)
         return a.reshape(-1,4)[:,0]
     orm=np.ones((n,4),dtype=np.float32)
+    orm[:,0]=1.0    # AO unbaked        -> unoccluded
+    orm[:,1]=0.5    # roughness unbaked -> neutral
+    orm[:,2]=0.0    # metallic unbaked  -> DIELECTRIC, never "all metal"
     if "ao" in imgs: orm[:,0]=px(imgs["ao"])
     if "roughness" in imgs: orm[:,1]=px(imgs["roughness"])
     if "metallic" in imgs: orm[:,2]=px(imgs["metallic"])
@@ -429,8 +477,15 @@ def final_material(A,objs,imgs,orm):
     if orm is not None:
         sp=nt.nodes.new('ShaderNodeSeparateColor'); sp.location=(-90,-40)
         nt.links.new(tex(orm,(-380,-40)).outputs['Color'],sp.inputs['Color'])
-        nt.links.new(sp.outputs[1],b.inputs['Roughness'])
-        nt.links.new(sp.outputs[2],b.inputs['Metallic'])
+        if "roughness" in imgs: nt.links.new(sp.outputs[1],b.inputs['Roughness'])
+        if "metallic" in imgs:  nt.links.new(sp.outputs[2],b.inputs['Metallic'])
+    else:
+        # no ORM (fewer than two data channels baked) -> wire the singles directly,
+        # otherwise a baked map is written to disk but never used by the material
+        if "roughness" in imgs:
+            nt.links.new(tex(imgs["roughness"],(-380,-40)).outputs['Color'],b.inputs['Roughness'])
+        if "metallic" in imgs:
+            nt.links.new(tex(imgs["metallic"],(-380,-200)).outputs['Color'],b.inputs['Metallic'])
     if "normal" in imgs:
         nmn=nt.nodes.new('ShaderNodeNormalMap'); nmn.location=(-90,-360)
         nt.links.new(tex(imgs["normal"],(-380,-360)).outputs['Color'],nmn.inputs['Color'])
@@ -468,6 +523,7 @@ def collision(A,objs,cfg):
     pool=[o for o in objs if o.name in names] if names else \
          sorted(objs,key=lambda o:-len(o.data.polygons))[:A.collision_parts]
     out=[]
+    if A.collision=="parts": pool=objs        # every part gets a hull, not just the top N
     if A.collision=="hull":
         j=join_copy(objs,"UCX_%s_00"%A.name)
         bpy.context.view_layer.objects.active=j
@@ -654,7 +710,9 @@ def main(argv):
     A=cli(argv)
     cfg=json.load(open(A.config)) if A.config else {}
     outdir=os.path.abspath(A.out); os.makedirs(outdir,exist_ok=True)
-    sc=fresh(); load(A)
+    fresh(); load(A)
+    sc=bpy.context.scene            # re-fetch: a .blend input frees the old datablock
+    sc.render.engine='CYCLES'; sc.cycles.device='CPU'
     objs=meshes()
     if not objs: raise SystemExit("no mesh objects loaded")
     rep={"name":A.name,"input":A.input or A.builtin or A.generator}
@@ -662,6 +720,7 @@ def main(argv):
     normalize(A,objs)
     objs=split(A)
     cleanup(A,objs)
+    bevel(A,objs)
     pivots(A,objs,cfg)
     root=hierarchy(A,objs,cfg)
     reps=unwrap(A,objs)

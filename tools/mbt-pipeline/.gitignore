@@ -1,0 +1,8 @@
+out_*/
+*.blend
+*.png
+*.glb
+*.fbx
+*.obj
+*.mtl
+__pycache__/

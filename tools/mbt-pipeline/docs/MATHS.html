@@ -1,0 +1,500 @@
+<title>Maths of the MBT Build</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;1,400&display=swap">
+<style>
+  :root{
+    --ground:#EFF1ED; --panel:#F8F9F6; --plate:#E7EAE4;
+    --ink:#15181A; --muted:#59635C; --rule:#C8CFC6;
+    --accent:#2F5D48; --num:#8A6414; --bad:#8C3A22;
+    --disp:"IBM Plex Sans Condensed",'Arial Narrow',sans-serif;
+    --body:"Spectral",Georgia,serif;
+    --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ground:#121412; --panel:#191C19; --plate:#1F241F;
+      --ink:#E7EBE6; --muted:#96A098; --rule:#2C332C;
+      --accent:#82BA9E; --num:#D7A947; --bad:#D98A6C;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#121412; --panel:#191C19; --plate:#1F241F;
+    --ink:#E7EBE6; --muted:#96A098; --rule:#2C332C;
+    --accent:#82BA9E; --num:#D7A947; --bad:#D98A6C;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--ground); color:var(--ink); font-family:var(--body);
+       font-size:17px; line-height:1.62; margin:0;
+       -webkit-font-smoothing:antialiased}
+  .wrap{max-width:960px; margin:0 auto; padding:64px 28px 96px}
+  .masthead{border-bottom:2px solid var(--ink); padding-bottom:22px; margin-bottom:14px}
+  .eyebrow{font-family:var(--disp); font-size:12px; font-weight:600;
+           letter-spacing:.16em; text-transform:uppercase; color:var(--accent)}
+  h1{font-family:var(--disp); font-weight:700; font-size:clamp(40px,7vw,68px);
+     line-height:.98; letter-spacing:-.015em; margin:.18em 0 .1em; text-wrap:balance}
+  .standfirst{font-size:19px; color:var(--muted); max-width:62ch; margin:.6em 0 0}
+  .specline{display:flex; flex-wrap:wrap; gap:0 26px; font-family:var(--mono);
+            font-size:12.5px; color:var(--muted); margin-top:26px;
+            padding-top:14px; border-top:1px solid var(--rule)}
+  .specline b{color:var(--ink); font-weight:500}
+
+  section{margin-top:62px}
+  .shead{display:flex; gap:16px; align-items:baseline;
+         border-bottom:1px solid var(--rule); padding-bottom:8px; margin-bottom:22px}
+  .snum{font-family:var(--mono); font-size:13px; font-weight:600; color:var(--num);
+        font-variant-numeric:tabular-nums; flex:0 0 auto; padding-top:3px}
+  h2{font-family:var(--disp); font-weight:600; font-size:27px; letter-spacing:-.005em;
+     margin:0; text-wrap:balance}
+  h3{font-family:var(--disp); font-weight:600; font-size:16px; letter-spacing:.02em;
+     text-transform:uppercase; color:var(--accent); margin:32px 0 10px}
+  p{margin:0 0 15px; max-width:68ch}
+  em{font-style:italic}
+  strong{font-weight:500}
+  a{color:var(--accent)}
+
+  .eq{background:var(--plate); border-left:2px solid var(--accent);
+      font-family:var(--mono); font-size:14.5px; line-height:1.85;
+      padding:16px 18px; margin:20px 0; overflow-x:auto;
+      display:flex; justify-content:space-between; gap:24px; align-items:flex-start}
+  .eq .body{white-space:pre; min-width:0}
+  .eq .tag{font-size:11.5px; color:var(--muted); flex:0 0 auto; padding-top:3px;
+           font-variant-numeric:tabular-nums}
+  .note{font-size:14.5px; color:var(--muted); max-width:66ch; margin:-6px 0 16px}
+
+  .data{display:grid; grid-template-columns:1fr auto; gap:0;
+        border-top:1px solid var(--rule); margin:22px 0; font-size:15px}
+  .data>div{padding:9px 2px; border-bottom:1px solid var(--rule)}
+  .data .k{color:var(--muted)}
+  .data .v{font-family:var(--mono); font-variant-numeric:tabular-nums;
+           text-align:right; color:var(--ink); font-weight:500}
+  .data .v.hi{color:var(--num)}
+  .data .v.no{color:var(--bad)}
+
+  .tablewrap{overflow-x:auto; margin:22px 0}
+  table{border-collapse:collapse; width:100%; font-size:14.5px; min-width:460px}
+  th{font-family:var(--disp); font-size:12px; letter-spacing:.1em; text-transform:uppercase;
+     color:var(--muted); text-align:left; font-weight:600;
+     border-bottom:1px solid var(--ink); padding:0 14px 7px 0}
+  td{border-bottom:1px solid var(--rule); padding:8px 14px 8px 0}
+  td.n{font-family:var(--mono); font-variant-numeric:tabular-nums; text-align:right;
+       padding-right:0}
+
+  .callout{background:var(--panel); border:1px solid var(--rule);
+           padding:20px 22px; margin:26px 0}
+  .callout .eyebrow{color:var(--num)}
+  .callout p{margin:8px 0 0}
+  .callout p:last-child{margin-bottom:0}
+
+  .bug{border-left:2px solid var(--bad); padding-left:16px; margin:22px 0}
+  .bug .eyebrow{color:var(--bad)}
+
+  footer{margin-top:78px; padding-top:20px; border-top:2px solid var(--ink);
+         font-family:var(--mono); font-size:12.5px; color:var(--muted)}
+  code{font-family:var(--mono); font-size:.92em; background:var(--plate);
+       padding:1px 5px; border-radius:2px}
+</style>
+
+<div class="wrap">
+
+<div class="masthead">
+  <div class="eyebrow">From-scratch renderer &middot; procedural geometry &middot; asset pipeline</div>
+  <h1>Maths of the MBT Build</h1>
+  <p class="standfirst">Every equation that actually ran during the build &mdash; the solid
+  constructor, two renderers written from nothing, the radiometry that was wrong twice,
+  and the topology proof that the mesh is watertight.</p>
+  <div class="specline">
+    <span><b>14,432</b> triangles</span>
+    <span><b>8,468</b> vertices</span>
+    <span><b>626</b> closed shells</span>
+    <span><b>31</b> rig parts</span>
+    <span><b>0</b> non-manifold edges</span>
+  </div>
+</div>
+
+<section>
+  <div class="shead"><div class="snum">01</div><h2>Solid construction</h2></div>
+
+  <p>Every part is a convex solid swept from a 2D profile. For a profile
+  <code>{(u&#8341;, v&#8341;)}</code> extruded along an axis of length <em>L</em> with a taper
+  <em>k</em> applied at the far cap, the vertex map for axis&nbsp;<em>x</em> is:</p>
+
+  <div class="eq"><div class="body">A&#8341; = ( &minus;L/2 ,  v&#8341; ,  u&#8341; )
+B&#8341; = ( +L/2 ,  k&middot;v&#8341; ,  k&middot;u&#8341; )</div><div class="tag">1.1</div></div>
+
+  <p>Caps are fans over each ring; sides are quads <code>(A&#8341;, A&#11388;, B&#11388;, B&#8341;)</code>
+  with <em>j</em> = (<em>i</em>+1) mod <em>n</em>. A cylinder is the same routine with a
+  circular profile, and its side normals are radial rather than face-derived &mdash; that
+  single distinction is what makes 22-segment barrels read as round instead of faceted:</p>
+
+  <div class="eq"><div class="body">n&#8341; = ( 0 , v&#8341; , u&#8341; ) / &#8730;(u&#8341;&sup2; + v&#8341;&sup2;)</div><div class="tag">1.2</div></div>
+
+  <h3>Chamfering a profile</h3>
+  <p>Sharp profile corners were bevelled analytically before extrusion. Each vertex
+  <em>p</em> with neighbours <em>a</em>, <em>b</em> becomes two vertices pulled a distance
+  <em>c</em> along each incident edge:</p>
+
+  <div class="eq"><div class="body">p&#8321; = p + c &middot; (a &minus; p)/|a &minus; p|
+p&#8322; = p + c &middot; (b &minus; p)/|b &minus; p|</div><div class="tag">1.3</div></div>
+
+  <h3>Orienting normals without trusting winding</h3>
+  <p>Winding was inconsistent across my face tables, so backface culling failed and box
+  interiors showed through. Rather than fix 12 face orderings by hand, normals were
+  oriented against each solid's own centroid <em>C</em> &mdash; valid for any convex solid:</p>
+
+  <div class="eq"><div class="body">n &larr; n &middot; sgn( n &middot; (c&#7524; &minus; C) )        c&#7524; = triangle centroid</div><div class="tag">1.4</div></div>
+
+  <h3>Track as an arc-length path</h3>
+  <p>The track is a stadium curve of straight length <em>L</em> and end radius <em>r</em>,
+  sampled at constant arc length so link pitch stays uniform around the sprocket:</p>
+
+  <div class="eq"><div class="body">P = 2L + 2&pi;r
+&theta;(t) = &minus;atan2( &Delta;y , &Delta;z )     link pitch = P / N ,  N = 84 per side</div><div class="tag">1.5</div></div>
+</section>
+
+<section>
+  <div class="shead"><div class="snum">02</div><h2>The wheel-overlap bug, as inequalities</h2></div>
+
+  <p>You spotted road wheels passing through each other. The whole defect is one
+  inequality that was never checked. For equal circles of radius <em>r</em> at pitch
+  <em>s</em>, and for two circles of radii <em>r</em>&#8321;, <em>r</em>&#8322; at centre
+  distance <em>d</em>:</p>
+
+  <div class="eq"><div class="body">neighbours:   s &minus; 2r      &ge; 0
+dissimilar:   d &minus; (r&#8321;+r&#8322;) &ge; 0    d = &#8730;(&Delta;z&sup2; + &Delta;y&sup2;)</div><div class="tag">2.1</div></div>
+
+  <div class="tablewrap"><table>
+    <tr><th>Constraint</th><th style="text-align:right">Before</th><th style="text-align:right">After</th></tr>
+    <tr><td>wheel radius / pitch</td><td class="n">0.500 / 0.86</td><td class="n">0.375 / 0.78</td></tr>
+    <tr><td>neighbour clearance</td><td class="n" style="color:var(--bad)">&minus;0.140</td><td class="n" style="color:var(--num)">+0.030</td></tr>
+    <tr><td>end wheel &rarr; sprocket</td><td class="n" style="color:var(--bad)">&minus;0.310</td><td class="n" style="color:var(--num)">+0.073</td></tr>
+    <tr><td>end wheel &rarr; idler</td><td class="n" style="color:var(--bad)">&minus;0.280</td><td class="n" style="color:var(--num)">+0.103</td></tr>
+  </table></div>
+
+  <p class="note">A 1.00&nbsp;m wheel on a 0.86&nbsp;m pitch overlaps by 14% of its own
+  diameter. The axle line also had to drop so the wheels ride the track's inner face:
+  <code>y = t + r = 0.031 + 0.375 = 0.406</code>, against 0.60 before, which is why the
+  running gear looked detached from the track.</p>
+</section>
+
+<section>
+  <div class="shead"><div class="snum">03</div><h2>Rasteriser written from nothing</h2></div>
+
+  <p>Before Blender was available, the renderer was a z-buffer rasteriser in numpy.
+  Camera basis from eye <em>e</em>, target <em>t</em>, world up <em>u</em>:</p>
+
+  <div class="eq"><div class="body">f = (t &minus; e)/|t &minus; e| ,   r = (f &times; u)/|f &times; u| ,   u&prime; = r &times; f
+fl = (H/2) / tan(fov&#7515;/2)
+s&#8339; = W/2 + x&#7515;&middot;fl/z ,   s&#7521; = H/2 &minus; y&#7515;&middot;fl/z</div><div class="tag">3.1</div></div>
+
+  <p>Coverage via edge functions, with <em>D</em> twice the signed screen area:</p>
+
+  <div class="eq"><div class="body">D  = (x&#8321;&minus;x&#8320;)(y&#8322;&minus;y&#8320;) &minus; (x&#8322;&minus;x&#8320;)(y&#8321;&minus;y&#8320;)
+w&#8320; = [ (x&#8321;&minus;p&#8339;)(y&#8322;&minus;p&#8321;) &minus; (x&#8322;&minus;p&#8339;)(y&#8321;&minus;p&#8321;) ] / D      inside &hArr; w&#8320;,w&#8321;,w&#8322; &ge; 0</div><div class="tag">3.2</div></div>
+
+  <p>Depth is stored as 1/<em>z</em>, because <strong>1/z is affine in screen space while
+  z is not</strong>. The same fact gives perspective-correct attributes &mdash; world
+  position and normals are interpolated as A/z then divided by the interpolated 1/z:</p>
+
+  <div class="eq"><div class="body">1/z = &Sigma; w&#8341;/z&#8341;                    A = ( &Sigma; w&#8341;&middot;A&#8341;/z&#8341; ) / ( &Sigma; w&#8341;/z&#8341; )</div><div class="tag">3.3</div></div>
+
+  <div class="bug">
+    <div class="eyebrow">Bug &mdash; the ground was one enormous quad</div>
+    <p>A single 520&nbsp;m ground quad had two corners <em>behind</em> the camera, where
+    <em>z</em><sub>view</sub> &lt; 0. Equation 3.1 divides by <em>z</em>, so those vertices
+    projected through infinity and every barycentric weight on that triangle was garbage.
+    World position was therefore garbage for every ground pixel &mdash; which silently broke
+    the shadow lookup, the ambient occlusion <em>and</em> the soil texture at once, from one
+    root cause. Fix: reject any triangle with <code>min z&#7515; &le; n</code> and tessellate
+    the ground into camera-centred rings so no triangle ever straddles the near plane.</p>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><div class="snum">04</div><h2>Shadow mapping, and why the test is exact</h2></div>
+
+  <p>Build an orthonormal light basis from the sun direction <em>L</em> (pointing
+  <em>toward</em> the light), then store, per light-space cell, the depth of the closest
+  surface:</p>
+
+  <div class="eq"><div class="body">l&#7512; = (L &times; up)/|L &times; up| ,   l&#7515; = l&#7512; &times; L
+u = P &middot; l&#7512; ,   v = P &middot; l&#7515; ,   d(P) = C &minus; P &middot; L</div><div class="tag">4.1</div></div>
+
+  <p>A point is lit iff <code>d(P) &le; d<sub>map</sub>(u,v) + &beta;</code>. This is exact,
+  and the proof is two lines. Any occluder lies at <em>Q</em> = <em>P</em> + <em>tL</em> for
+  some <em>t</em> &gt; 0. Since <em>l</em><sub>u</sub>, <em>l</em><sub>v</sub> &#8869;
+  <em>L</em>, occluder and receiver share the same (u,&nbsp;v) cell, and:</p>
+
+  <div class="eq"><div class="body">d(Q) = C &minus; (P + tL)&middot;L = d(P) &minus; t     &rArr;   d(P) = d(Q) + t &gt; d(Q) + &beta;   for t &gt; &beta;</div><div class="tag">4.2</div></div>
+
+  <p>So the receiver fails the test by exactly the distance to its occluder. Bias must be
+  slope-scaled or grazing surfaces self-shadow into acne; nine taps give ten discrete
+  shadow levels:</p>
+
+  <div class="eq"><div class="body">&beta; = &beta;&#8320; + &beta;&#8321;(1 &minus; n&middot;L) = 0.013 + 0.052(1 &minus; n&middot;L)
+PCF: mean of 3&times;3 binary tests  &rarr;  {0, 1/9, &hellip;, 1}</div><div class="tag">4.3</div></div>
+</section>
+
+<section>
+  <div class="shead"><div class="snum">05</div><h2>Radiometry &mdash; the error that whitened everything</h2></div>
+
+  <p>Lambertian radiance from irradiance <em>E</em> at incidence <em>&theta;</em>, albedo
+  <em>&rho;</em>:</p>
+
+  <div class="eq"><div class="body">L = &rho; &middot; E &middot; cos&theta; / &pi;</div><div class="tag">5.1</div></div>
+
+  <p>The first renders came out near-white. The cause: I authored paint colours as sRGB
+  display values and fed them straight in as <em>&rho;</em>. Light transport is linear, so
+  albedo must be decoded first:</p>
+
+  <div class="eq"><div class="body">&rho;&#8343;&#8305;&#8345; = &rho;&#8347;&#7523;&#7524;&#7495;&#7495;^2.2</div><div class="tag">5.2</div></div>
+
+  <div class="data">
+    <div class="k">NATO green as authored (sRGB)</div><div class="v">0.290</div>
+    <div class="k">correct linear albedo</div><div class="v hi">0.0657</div>
+    <div class="k">reflectance overestimate</div><div class="v no">4.4&times;</div>
+    <div class="k">worst case, dark green 0.235</div><div class="v no">5.7&times;</div>
+  </div>
+
+  <p>The second radiometric error was scale. Blender's physical sky delivers real daylight,
+  roughly <em>E</em> &asymp; &pi;<em>L&#772;</em> &asymp; 50&nbsp;W/m&sup2; of diffuse
+  irradiance, while my sun lamp was set to 5.2&nbsp;W/m&sup2;. The sun was contributing
+  under a tenth of the light, so the image was pure ambient &mdash; flat and shadowless.
+  Real direct normal irradiance is ~950&nbsp;W/m&sup2;:</p>
+
+  <div class="eq"><div class="body">&Delta;EV = log&#8322;(E&#8342;&#7497;&#8347;/E&#8331;&#8343;&#8336;) = log&#8322;(950/5.2) = 7.51 stops</div><div class="tag">5.3</div></div>
+
+  <p class="note">That predicted exposure shift is why the working exposure landed at
+  &minus;5.95&nbsp;EV rather than the +0.35 I began with &mdash; a 6.3-stop move, the
+  remainder absorbed by the sky term that had been dominating.</p>
+</section>
+
+<section>
+  <div class="shead"><div class="snum">06</div><h2>Where to put the sun</h2></div>
+
+  <p>Shadows kept hiding behind the tank. That is not an art problem, it is a dot product.
+  A point at height <em>h</em> casts to a ground offset along &minus;<em>L</em><sub>h</sub>,
+  the horizontal part of the sun vector:</p>
+
+  <div class="eq"><div class="body">shadow offset = &minus;L&#8341; &middot; h / L&#7521;        |L&#8341;|/L&#7521; = 0.630/0.776 = 0.812 m per m of height</div><div class="tag">6.1</div></div>
+
+  <p>Visibility of that offset depends on its angle to the view direction
+  <em>v&#770;</em>. With the sun behind the camera, <em>L</em><sub>h</sub> &#8741;
+  <em>v&#770;</em>, the shadow runs directly away from the viewer and the subject occludes
+  its own shadow. Maximum visibility is the perpendicular case:</p>
+
+  <div class="eq"><div class="body">L&#8341; &middot; v&#770; &asymp; 0        &rArr;   shadow sweeps across frame, fully visible</div><div class="tag">6.2</div></div>
+
+  <p>But that condition puts every camera-facing surface at grazing incidence &mdash; lit
+  faces go dark. Both goals are satisfiable at once by aiming the <em>subject</em>, not the
+  light. Choose the heading <em>f</em> as the bisector of the sun and camera azimuths:</p>
+
+  <div class="eq"><div class="body">f = (L&#8341; + c)/|L&#8341; + c|        with L&#8341;&middot;c = 0 ,  both unit
+|L&#8341; + c| = &#8730;(2 + 2L&#8341;&middot;c) = &#8730;2
+f&middot;L&#8341; = f&middot;c = 1/&#8730;2 = cos 45&deg;</div><div class="tag">6.3</div></div>
+
+  <div class="callout">
+    <div class="eyebrow">Result</div>
+    <p>The glacis and the flank each sit at exactly 45&deg; to both sun and camera &mdash;
+    front lit, flank in grazing light for form, and the cast shadow still perpendicular to
+    the view. For this scene that heading is <strong>84.3&deg;</strong>, and it is computed,
+    not eyeballed.</p>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><div class="snum">07</div><h2>Reflectance model</h2></div>
+
+  <p>Specular uses GGX / Trowbridge-Reitz with <em>&alpha;</em> = roughness&sup2;,
+  Smith-Schlick geometry and Schlick's Fresnel:</p>
+
+  <div class="eq"><div class="body">D = &alpha;&sup2; / ( &pi; [ (n&middot;h)&sup2;(&alpha;&sup2; &minus; 1) + 1 ]&sup2; )
+
+G = (n&middot;l)/((n&middot;l)(1&minus;k)+k) &middot; (n&middot;v)/((n&middot;v)(1&minus;k)+k) ,   k = &alpha;/2
+
+F = F&#8320; + (1 &minus; F&#8320;)(1 &minus; n&middot;v)&#8309;
+
+f&#7523;&#7508;&#7497;&#7580; = D&middot;G&middot;F / (4 (n&middot;l)(n&middot;v))</div><div class="tag">7.1</div></div>
+
+  <p>Ambient in the hand-written renderer is a two-lobe hemisphere &mdash; sky above,
+  ground bounce below &mdash; mixed by the normal's vertical component:</p>
+
+  <div class="eq"><div class="body">L&#7524;&#7504;&#7495; = &rho; [ S&#7512;&#7511; &middot; &frac12;(1 + n&#7521;) + S&#7503;&#8345; &middot; &frac12;(1 &minus; n&#7521;) ] &middot; AO</div><div class="tag">7.2</div></div>
+</section>
+
+<section>
+  <div class="shead"><div class="snum">08</div><h2>Procedural fields</h2></div>
+
+  <p>All surface variation is value noise on an integer lattice, hashed and interpolated
+  with the smoothstep basis, summed over octaves:</p>
+
+  <div class="eq"><div class="body">w(t) = 3t&sup2; &minus; 2t&sup3;
+noise(x) = trilerp over 8 lattice hashes, weights w(frac x)
+fBm(x)  = &Sigma;&#8342; a&#7503; &middot; noise(b&#7503; x)</div><div class="tag">8.1</div></div>
+
+  <h3>Why the camouflage needed one octave, not four</h3>
+  <p>Camo is hard thresholds on the noise value. If <em>n</em> ~ U(0,1), the cut points
+  <em>are</em> the area fractions &mdash; so the pattern mix is specified directly:</p>
+
+  <div class="eq"><div class="body">green  n &lt; 0.445           44.5%
+brown  0.445 &le; n &lt; 0.715   27.0%
+black  n &ge; 0.715           28.5%</div><div class="tag">8.2</div></div>
+
+  <p>Summing octaves breaks this. By the central limit theorem a sum of independent noise
+  terms tends to Gaussian, the distribution concentrates about the mean, and the tails
+  thin out &mdash; so the upper cut stops being reached and <strong>the black patches
+  disappear</strong>. That is exactly what the four-octave version rendered, and it is why
+  the final pattern uses one octave plus a small perturbation.</p>
+
+  <h3>Dust saturation</h3>
+  <p>Dust accumulates by height and surface angle. The first version clipped to 1 across
+  the entire lower hull, repainting it uniform brown:</p>
+
+  <div class="eq"><div class="body">d = clamp( h(y) &middot; max(0, n&middot;&ucirc;) &middot; noise &middot; k , 0, 1 )
+k = 1.56  &rarr;  d &equiv; 1 over most of the hull        k = 0.63  &rarr;  usable gradient</div><div class="tag">8.3</div></div>
+</section>
+
+<section>
+  <div class="shead"><div class="snum">09</div><h2>Display transform</h2></div>
+
+  <p>Scene-linear radiance is exposed, tone mapped through the ACES-style rational
+  approximation, then gamma encoded:</p>
+
+  <div class="eq"><div class="body">x  &larr; L &middot; 2^EV
+x&prime; = x(2.51x + 0.03) / ( x(2.43x + 0.59) + 0.14 )
+c  = clamp(x&prime;,0,1)^(1/2.2)</div><div class="tag">9.1</div></div>
+
+  <p class="note">The rational form matters: it is monotonic, has a soft shoulder that
+  compresses highlights instead of clipping them, and rolls off toward 1 asymptotically.
+  A naive clamp would have blown out the sunlit deck.</p>
+</section>
+
+<section>
+  <div class="shead"><div class="snum">10</div><h2>Rig transforms &mdash; and the exploded tank</h2></div>
+
+  <p>Moving a part's origin to its rotation axis must not move the part. Subtract the pivot
+  from the mesh and put it back as a translation &mdash; the world position is invariant:</p>
+
+  <div class="eq"><div class="body">v&prime; = v &minus; p ,   M = T(p)        M &middot; v&prime; = v  &#10003;</div><div class="tag">10.1</div></div>
+
+  <p>Parenting then has to preserve world transforms. Blender composes:</p>
+
+  <div class="eq"><div class="body">M&#7584;&#8348;&#8348;&#8347;&#8340; = M&#8346;&#8336;&#8341;&#8337;&#8336;&#8344; &middot; M&#8346;&#8305; &middot; M&#8343;&#8338;&#7580;&#8336;&#8343;      &rArr;   M&#8346;&#8305; = M&#8346;&#8336;&#8341;&#8337;&#8336;&#8344;&#8315;&#185;</div><div class="tag">10.2</div></div>
+
+  <div class="bug">
+    <div class="eyebrow">Bug &mdash; stale parent matrix</div>
+    <p>I read <code>M&#8346;&#8336;&#8341;&#8337;&#8336;&#8344;</code> before the dependency
+    graph had refreshed, so it returned the identity while the parent had actually been
+    translated to its centroid. With <em>M</em><sub>pi</sub> = <em>I</em> instead of
+    <em>T</em>(<em>p</em>)<sup>&minus;1</sup>, every child inherited an unwanted offset of
+    exactly <em>p</em><sub>parent</sub> &mdash; the turret floating above a hull that had
+    come apart. It went unnoticed for one stage only because Hull's pivot happened to be
+    the origin, making <em>T</em>(0) = <em>I</em> and the bug invisible.</p>
+  </div>
+
+  <h3>Axis conversion</h3>
+  <p>The generator works Y-up, Blender is Z-up. The mapping must be a proper rotation, or
+  the model mirrors:</p>
+
+  <div class="eq"><div class="body">(x, y, z) &rarr; (x, &minus;z, y)        det = +1  &#10003;  handedness preserved</div><div class="tag">10.3</div></div>
+</section>
+
+<section>
+  <div class="shead"><div class="snum">11</div><h2>UV metrics</h2></div>
+
+  <p>Texel density for a triangle of UV area <em>A</em><sub>uv</sub> (unit square) and world
+  area <em>A</em><sub>w</sub>, on an <em>S</em>&times;<em>S</em> map, plus atlas
+  utilisation:</p>
+
+  <div class="eq"><div class="body">&delta; = &#8730;A&#7524;&#7515; &middot; S / &#8730;A&#7526;   [texels/m]        U = &Sigma; A&#7524;&#7515;</div><div class="tag">11.1</div></div>
+
+  <div class="data">
+    <div class="k">atlas utilisation, MBT</div><div class="v no">17.4%</div>
+    <div class="k">atlas utilisation, single-island control</div><div class="v hi">50.8%</div>
+    <div class="k">UV islands, MBT</div><div class="v no">3,756</div>
+    <div class="k">faces per island</div><div class="v">3.8</div>
+    <div class="k">texel density @2048</div><div class="v">41 tex/m</div>
+    <div class="k">density spread, p5&rarr;p95</div><div class="v hi">1.1&times;</div>
+  </div>
+
+  <p>Utilisation is bounded by island count, not by the packer. Each island carries a
+  margin, so wasted area grows with total island perimeter &mdash; roughly
+  <em>N</em>&middot;&#8730;<em>A&#772;</em>&middot;<em>m</em>. 3,756 islands against a
+  single-island control that reaches 50.8% at identical settings isolates the cause to
+  the mesh being 626 intersecting shells.</p>
+
+  <div class="bug">
+    <div class="eyebrow">Bug &mdash; island detection compared the wrong corners</div>
+    <p>Two faces sharing an edge traverse it in <em>opposite</em> orientation. Comparing
+    each face's edge-loop UVs positionally compares the UV at one face's first vertex
+    against the other face's second &mdash; almost never equal, so every face read as its
+    own island and the count came back as 14,432, exactly the face count. Continuity has to
+    be tested per <em>vertex</em>:</p>
+    <div class="eq" style="border-left-color:var(--bad)"><div class="body">continuous &hArr; { (v, uv) : v &isin; edge }&#7580; = { (v, uv) : v &isin; edge }&#7595;</div><div class="tag">11.2</div></div>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><div class="snum">12</div><h2>Topology, proved</h2></div>
+
+  <p>The strongest result in the build needs no renderer. In a closed triangle mesh every
+  edge is shared by exactly two faces, which pins the edge count from the face count:</p>
+
+  <div class="eq"><div class="body">E = 3F/2 = 3(14,432)/2 = 21,648</div><div class="tag">12.1</div></div>
+
+  <p>Euler's formula for a disjoint union of <em>c</em> closed orientable surfaces of genus
+  <em>g&#8341;</em>:</p>
+
+  <div class="eq"><div class="body">&chi; = V &minus; E + F = &Sigma;&#8341; (2 &minus; 2g&#8341;)</div><div class="tag">12.2</div></div>
+
+  <div class="eq"><div class="body">&chi; = 8,468 &minus; 21,648 + 14,432 = 1,252
+if every shell is genus 0:  c = &chi;/2 = 626</div><div class="tag">12.3</div></div>
+
+  <div class="callout">
+    <div class="eyebrow">Independent confirmation</div>
+    <p>The connected-component count measured by flood fill is <strong>626</strong>. It
+    agrees with &chi;/2 exactly. Two unrelated methods &mdash; one combinatorial, one a
+    graph traversal &mdash; return the same number, which proves all 626 shells are
+    <strong>closed, orientable and genus 0</strong>: no holes, no handles, no boundary.
+    The measured counts of non-manifold edges, boundary edges, loose vertices, zero-area
+    faces and duplicate faces are all <strong>0</strong>, consistent with that.</p>
+  </div>
+
+  <p class="note">This is the one respect in which the asset is genuinely production-grade,
+  and it is the criterion most hand-modelled meshes fail.</p>
+</section>
+
+<section>
+  <div class="shead"><div class="snum">13</div><h2>Appendix &mdash; LODs and the token accounting</h2></div>
+
+  <p>Decimation is a straight target-ratio on the triangle count, and it landed where
+  predicted:</p>
+
+  <div class="eq"><div class="body">14,432 &times; 0.45 = 6,494.4  &rarr;  6,494 actual
+14,432 &times; 0.18 = 2,597.8  &rarr;  2,596 actual</div><div class="tag">13.1</div></div>
+
+  <p>And from the review that opened the session &mdash; the arithmetic that decided
+  skills over MCP tools. Resident context cost is the sum of always-loaded description
+  text:</p>
+
+  <div class="tablewrap"><table>
+    <tr><th>Surface</th><th style="text-align:right">Count</th><th style="text-align:right">Chars</th><th style="text-align:right">&asymp;Tokens</th><th>Paid</th></tr>
+    <tr><td>MCP tool schemas</td><td class="n">514</td><td class="n">63,796</td><td class="n">15,949</td><td>always</td></tr>
+    <tr><td>Skill frontmatter</td><td class="n">81</td><td class="n">14,413</td><td class="n">3,603</td><td>always</td></tr>
+    <tr><td>Skill bodies</td><td class="n">81</td><td class="n">48,784</td><td class="n">12,196</td><td>on demand</td></tr>
+  </table></div>
+
+  <div class="eq"><div class="body">ratio = 15,949 / 3,603 = 4.43&times;  on prose alone
+       &rarr; 7&ndash;10&times;  once JSON Schema structure is included</div><div class="tag">13.2</div></div>
+
+  <p class="note">The load-bearing distinction is not size but <em>cacheability</em>: a tool
+  manifest is paid once per session and is prompt-cacheable, whereas tool <em>responses</em>
+  are paid every call and are not. One unfiltered scene dump outweighs the entire 87-tool
+  manifest, repeatedly.</p>
+</section>
+
+<footer>
+  All figures measured from the build, not estimated &middot; two renderers (numpy z-buffer,
+  Cycles path tracer) &middot; 643-line generic asset pipeline &middot; geometry from
+  arithmetic, no reference models or scanned assets
+</footer>
+
+</div>

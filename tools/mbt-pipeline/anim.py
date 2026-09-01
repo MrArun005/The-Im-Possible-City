@@ -444,7 +444,7 @@ for f in range(NF):
 
 # ================================================================= render
 sc.cycles.samples = SAMP
-sc.cycles.use_adaptive_sampling = True; sc.cycles.adaptive_threshold = 0.035
+sc.cycles.use_adaptive_sampling = True; sc.cycles.adaptive_threshold = float(os.environ.get("ATHR","0.035"))
 sc.cycles.use_denoising = True
 sc.cycles.max_bounces = 8; sc.cycles.volume_bounces = 1
 sc.cycles.volume_step_rate = 1.6; sc.cycles.volume_max_steps = 256

@@ -24,12 +24,27 @@ strip = ed.sequences.new_image("frames", files[0], 1, 1) if hasattr(ed, "sequenc
         else ed.strips.new_image("frames", files[0], 1, 1)
 for f in files[1:]:
     strip.elements.append(os.path.basename(f))
-sc.render.image_settings.file_format = 'FFMPEG'
-sc.render.ffmpeg.format = 'MPEG4'; sc.render.ffmpeg.codec = 'H264'
-sc.render.ffmpeg.constant_rate_factor = 'HIGH'; sc.render.ffmpeg.gopsize = 12
-sc.render.filepath = OUT
-sc.view_settings.view_transform = 'Standard'      # frames are already display-referred
-bpy.ops.render.render(animation=True)
+def encode_blender():
+    sc.render.image_settings.file_format = 'FFMPEG'      # raises if bpy lacks FFmpeg
+    sc.render.ffmpeg.format = 'MPEG4'; sc.render.ffmpeg.codec = 'H264'
+    sc.render.ffmpeg.constant_rate_factor = 'HIGH'; sc.render.ffmpeg.gopsize = 12
+    sc.render.filepath = OUT
+    sc.view_settings.view_transform = 'Standard'   # frames are already display-referred
+    bpy.ops.render.render(animation=True)
+
+def encode_external():
+    """the pip 'bpy' wheel ships without FFmpeg; fall back to the imageio binary"""
+    import subprocess, imageio_ffmpeg
+    exe = imageio_ffmpeg.get_ffmpeg_exe()
+    import re
+    stem = re.sub(r"\d+\.png$", "", os.path.basename(files[0]))   # "f0001.png" -> "f"
+    pat = os.path.join(FR, stem + "%04d.png")
+    subprocess.run([exe, "-y", "-framerate", str(FPS), "-start_number", "1", "-i", pat,
+                    "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "18", "-movflags", "+faststart",
+                    OUT], check=True, capture_output=True)
+
+try: encode_blender()
+except TypeError: encode_external()
 print("WROTE", OUT, "%.1f MB, %d frames @ %d fps" % (os.path.getsize(OUT)/1e6, len(files), FPS))
 
 # ---- contact sheet: key frames tiled, labelled by frame number in the filename

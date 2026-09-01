@@ -54,6 +54,57 @@ def bump(nt,bsdf,vec,scale,strength,loc=(200,-500)):
     nt.links.new(bp2.outputs['Normal'],bsdf.inputs['Normal'])
     return bp2
 
+def _geo_pos(nt,loc):
+    g=nt.nodes.new('ShaderNodeNewGeometry'); g.location=loc
+    return g
+
+def streak_mask(nt,loc=(-1600,-1500)):
+    """gravity-driven grime: noise stretched vertically, only on non-horizontal faces,
+    strongest below the mid-hull. This is the single biggest 'it has been somewhere' cue."""
+    g=_geo_pos(nt,loc)
+    mp=nt.nodes.new('ShaderNodeMapping'); mp.location=(loc[0]+180,loc[1])
+    mp.inputs['Scale'].default_value=(9.0,9.0,0.42)      # squash Z -> vertical runs
+    nt.links.new(g.outputs['Position'],mp.inputs['Vector'])
+    nz=nt.nodes.new('ShaderNodeTexNoise'); nz.location=(loc[0]+360,loc[1])
+    nz.inputs['Scale'].default_value=2.2; nz.inputs['Detail'].default_value=7.0
+    nz.inputs['Roughness'].default_value=0.72
+    nt.links.new(mp.outputs['Vector'],nz.inputs['Vector'])
+    sh=nt.nodes.new('ShaderNodeMapRange'); sh.location=(loc[0]+540,loc[1])
+    sh.inputs['From Min'].default_value=0.52; sh.inputs['From Max'].default_value=0.78
+    nt.links.new(nz.outputs['Fac'],sh.inputs['Value'])
+    # vertical faces only
+    sep=nt.nodes.new('ShaderNodeSeparateXYZ'); sep.location=(loc[0]+360,loc[1]-220)
+    nt.links.new(g.outputs['Normal'],sep.inputs['Vector'])
+    ab=nt.nodes.new('ShaderNodeMath'); ab.location=(loc[0]+520,loc[1]-220); ab.operation='ABSOLUTE'
+    nt.links.new(sep.outputs['Z'],ab.inputs[0])
+    vert=nt.nodes.new('ShaderNodeMath'); vert.location=(loc[0]+680,loc[1]-220)
+    vert.operation='SUBTRACT'; vert.inputs[0].default_value=1.0
+    nt.links.new(ab.outputs['Value'],vert.inputs[1])
+    m1=nt.nodes.new('ShaderNodeMath'); m1.location=(loc[0]+860,loc[1]-100); m1.operation='MULTIPLY'
+    nt.links.new(sh.outputs['Result'],m1.inputs[0])
+    nt.links.new(vert.outputs['Value'],m1.inputs[1])
+    return m1.outputs['Value']
+
+def side_bias(nt,loc=(-1600,-1900)):
+    """one flank always gets dirtier than the other - symmetry is the tell"""
+    g=_geo_pos(nt,loc)
+    sep=nt.nodes.new('ShaderNodeSeparateXYZ'); sep.location=(loc[0]+180,loc[1])
+    nt.links.new(g.outputs['Position'],sep.inputs['Vector'])
+    mr=nt.nodes.new('ShaderNodeMapRange'); mr.location=(loc[0]+360,loc[1])
+    mr.inputs['From Min'].default_value=-2.0; mr.inputs['From Max'].default_value=2.0
+    mr.inputs['To Min'].default_value=1.25;   mr.inputs['To Max'].default_value=0.62
+    nt.links.new(sep.outputs['X'],mr.inputs['Value'])
+    lo=nt.nodes.new('ShaderNodeTexNoise'); lo.location=(loc[0]+360,loc[1]-200)
+    lo.inputs['Scale'].default_value=0.22; lo.inputs['Detail'].default_value=3.0
+    nt.links.new(g.outputs['Position'],lo.inputs['Vector'])
+    lm=nt.nodes.new('ShaderNodeMapRange'); lm.location=(loc[0]+540,loc[1]-200)
+    lm.inputs['To Min'].default_value=0.55; lm.inputs['To Max'].default_value=1.45
+    nt.links.new(lo.outputs['Fac'],lm.inputs['Value'])
+    mul=nt.nodes.new('ShaderNodeMath'); mul.location=(loc[0]+720,loc[1]); mul.operation='MULTIPLY'
+    nt.links.new(mr.outputs['Result'],mul.inputs[0])
+    nt.links.new(lm.outputs['Result'],mul.inputs[1])
+    return mul.outputs['Value']
+
 def dust_and_wear(nt,bsdf,vec,basecol_out,rough_base,dusty=0.55,wear=0.22):
     """mix accumulated dust by height + expose worn metal on convex edges"""
     # dust mask: low + upward surfaces, broken up by noise
@@ -79,6 +130,10 @@ def dust_and_wear(nt,bsdf,vec,basecol_out,rough_base,dusty=0.55,wear=0.22):
     mu=nt.nodes.new('ShaderNodeMath'); mu.location=(-700,-900); mu.operation='MULTIPLY'
     nt.links.new(m1.outputs['Value'],mu.inputs[0])
     nt.links.new(upc.outputs['Result'],mu.inputs[1])
+    asym=nt.nodes.new('ShaderNodeMath'); asym.location=(-700,-980); asym.operation='MULTIPLY'
+    nt.links.new(mu.outputs['Value'],asym.inputs[0])
+    nt.links.new(side_bias(nt),asym.inputs[1])
+    mu=asym
     m2=nt.nodes.new('ShaderNodeMath'); m2.location=(-620,-780); m2.operation='MULTIPLY'
     m2.inputs[1].default_value=dusty*1.15
     nt.links.new(mu.outputs['Value'],m2.inputs[0])
@@ -102,11 +157,46 @@ def dust_and_wear(nt,bsdf,vec,basecol_out,rough_base,dusty=0.55,wear=0.22):
     nt.links.new(wm.outputs['Value'],wm2.inputs[0])
     wc=nt.nodes.new('ShaderNodeClamp'); wc.location=(-260,-1200)
     nt.links.new(wm2.outputs['Value'],wc.inputs['Value'])
+    # hard-edged chipping: paint -> red-oxide primer -> bare metal, with grime on top
+    chip=nt.nodes.new('ShaderNodeValToRGB'); chip.location=(-260,-1500)
+    chip.color_ramp.interpolation='CONSTANT'
+    ce=chip.color_ramp.elements
+    ce[0].position=0.0;  ce[0].color=(0,0,0,1)              # intact paint
+    ce[1].position=0.55; ce[1].color=(0.5,0.5,0.5,1)        # primer showing
+    ce3=ce.new(0.80);    ce3.color=(1,1,1,1)                # bare metal
+    nt.links.new(wc.outputs['Result'],chip.inputs['Fac'])
+    prim=nt.nodes.new('ShaderNodeMixRGB'); prim.location=(-60,-380)
+    prim.inputs['Color2'].default_value=(0.052,0.020,0.011,1)   # red-oxide primer
+    nt.links.new(dmix.outputs['Color'],prim.inputs['Color1'])
+    pf=nt.nodes.new('ShaderNodeMath'); pf.location=(-230,-380); pf.operation='MULTIPLY'
+    pf.inputs[1].default_value=1.8
+    nt.links.new(chip.outputs['Color'],pf.inputs[0])
+    pc=nt.nodes.new('ShaderNodeClamp'); pc.location=(-140,-380)
+    nt.links.new(pf.outputs['Value'],pc.inputs['Value'])
+    nt.links.new(pc.outputs['Result'],prim.inputs['Fac'])
     wmix=nt.nodes.new('ShaderNodeMixRGB'); wmix.location=(-60,-300)
-    wmix.inputs['Color2'].default_value=(0.085,0.078,0.070,1)
-    nt.links.new(dmix.outputs['Color'],wmix.inputs['Color1'])
-    nt.links.new(wc.outputs['Result'],wmix.inputs['Fac'])
-    nt.links.new(wmix.outputs['Color'],bsdf.inputs['Base Color'])
+    wmix.inputs['Color2'].default_value=(0.075,0.070,0.064,1)   # bare metal
+    nt.links.new(prim.outputs['Color'],wmix.inputs['Color1'])
+    mf=nt.nodes.new('ShaderNodeMath'); mf.location=(-230,-300); mf.operation='SUBTRACT'
+    mf.inputs[0].default_value=0.0
+    nt.links.new(chip.outputs['Color'],mf.inputs[1])
+    mf2=nt.nodes.new('ShaderNodeMath'); mf2.location=(-160,-300); mf2.operation='MULTIPLY'
+    mf2.inputs[1].default_value=-1.0
+    nt.links.new(mf.outputs['Value'],mf2.inputs[0])
+    mth=nt.nodes.new('ShaderNodeMath'); mth.location=(-100,-300); mth.operation='GREATER_THAN'
+    mth.inputs[1].default_value=0.9
+    nt.links.new(chip.outputs['Color'],mth.inputs[0])
+    nt.links.new(mth.outputs['Value'],wmix.inputs['Fac'])
+    # gravity streaks darken everything they run over
+    stk=streak_mask(nt)
+    sm=nt.nodes.new('ShaderNodeMath'); sm.location=(-60,-1200); sm.operation='MULTIPLY'
+    sm.inputs[1].default_value=0.62
+    nt.links.new(stk,sm.inputs[0])
+    smix=nt.nodes.new('ShaderNodeMixRGB'); smix.location=(120,-300)
+    smix.inputs['Color2'].default_value=(0.030,0.022,0.014,1)   # dark grime
+    nt.links.new(wmix.outputs['Color'],smix.inputs['Color1'])
+    nt.links.new(sm.outputs['Value'],smix.inputs['Fac'])
+    nt.links.new(smix.outputs['Color'],bsdf.inputs['Base Color'])
     # roughness: dust raises it, wear lowers it
     rmix=nt.nodes.new('ShaderNodeMixRGB'); rmix.location=(200,-150)
     rmix.inputs['Color1'].default_value=(rough_base,)*3+(1,)

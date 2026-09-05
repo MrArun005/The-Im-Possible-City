@@ -3,65 +3,79 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Streets · The Im-Possible City · Layer 02</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,500;1,300&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<title>Streets · The Im-Possible City</title>
 <meta name="description" content="A map drawn by feet, redrawn every morning.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="../../shared/layer.css">
-<style>:root{--bg:#0c0a09;--fg:#fafaf9;--accent:#fb923c;--accent2:#f43f5e;--line:rgba(251,146,60,.25);--grad:linear-gradient(180deg,#0c0a09 0%,#2a1408 55%,#3b0a1c 100%)}</style>
+<style>:root{--bg:#0e0a08;--fg:#faf6f0;--accent:#ffb163}</style>
 </head>
 <body>
-<div class="progress"></div>
-<div class="stage" aria-hidden="true">
-  <div class="layer grad" data-speed="0"></div>
-  <div class="layer blob" data-speed="0.08" data-scale="0.3"></div>
-  <div class="layer grid" data-speed="0.15" data-rotate="4"></div>
-  <div class="layer shapes" data-speed="0.3" data-scale="0.15"><svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" fill="none" stroke="var(--accent)" stroke-opacity=".3" stroke-width="2"><path d="M0 700 L1200 100"/><path d="M0 100 L1200 700"/><path d="M600 0 L600 800"/><path d="M0 400 L1200 400"/><path d="M0 550 Q600 300 1200 550" stroke="var(--accent2)"/><path d="M0 250 Q600 500 1200 250" stroke="var(--accent2)"/><circle cx="600" cy="400" r="120" stroke-dasharray="6 10"/><circle cx="600" cy="400" r="260" stroke-dasharray="2 14"/></svg></div>
-  <div class="layer noise" data-speed="0.05"></div>
-  <div class="vignette"></div>
-</div>
-<nav class="topbar">
-  <a href="../../">← Master City</a>
-  <span>Layer 02 / 06</span>
-</nav>
+<div class="progress"></div><div class="grain"></div>
+<nav class="topbar"><a href="../../">← Master City</a><span class="idx">Layer 02 / 06</span></nav>
 <main>
-  <section class="panel hero">
-    <div class="eyebrow reveal in">Layer 02</div>
-    <h1 class="reveal in">Streets</h1>
-    <p class="lead reveal in" style="margin-top:28px">A map drawn by feet, redrawn every morning.</p>
-    <div class="scroll-hint">Scroll to descend</div>
-  </section>
-  <section class="panel left">
-    <div class="big-number" style="right:4vw;top:10vh">01</div>
-    <div class="card">
-      <div class="eyebrow reveal">Desire lines</div>
-      <h2 class="reveal">The shortest path is a footprint</h2>
-      <p class="lead reveal">Planners draw the avenues. People draw the shortcuts. Where the two disagree, grass dies and the real city appears, one worn diagonal at a time.</p>
+  <header class="hero" data-panel>
+    <div class="bg"><img src="https://unsplash.com/photos/E9JJVYGoNSY/download?force=true&w=2400" alt="Crowd crossing Shibuya at sunset" fetchpriority="high"></div>
+    <div class="inner">
+      <div>
+        <div class="eyebrow reveal in">Layer 02 · Desire</div>
+        <h1 class="reveal in d1">Streets</h1>
+        <p class="lead reveal in d2">A map drawn by feet, redrawn every morning.</p>
+      </div>
+      <div class="meta reveal in d3">Photo · Georgi Kalaydzhiev<br>Scroll-driven · overlay text</div>
+    </div>
+    <div class="scroll-hint">Scroll</div>
+  </header>
+  <section class="scene " data-panel>
+    <div class="pin">
+      <img src="https://unsplash.com/photos/6SA2PY0eqMY/download?force=true&w=1920" alt="People cross a busy intersection" loading="lazy">
+      <div class="num">01</div>
+      <div class="copy">
+        <div class="eyebrow">Desire lines</div>
+        <h2>The shortest path<br>is a <em>footprint</em></h2>
+        <p class="lead">Planners draw the avenues. People draw the shortcuts. Where the two disagree, grass dies and the real city appears, one worn diagonal at a time.</p>
+      </div>
+      <div class="caption">Photo · Hen Kaznelson</div>
     </div>
   </section>
-  <div class="marquee" data-dir="left"><span>STREETS · STREETS · STREETS · STREETS · STREETS ·</span></div>
-  <section class="panel right">
-    <div class="big-number" style="left:4vw;top:10vh">02</div>
-    <div class="card">
-      <div class="eyebrow reveal">Noise</div>
-      <h2 class="reveal">Ten thousand conversations, one sentence</h2>
-      <p class="lead reveal">Listen to a street long enough and it says the same thing over and over: I am here, I am here, I am here. That chorus is the pavement&#x27;s heartbeat.</p>
+  <section class="strip"><div class="word">Desire</div><div class="track"><figure><img src="https://unsplash.com/photos/nz-zE4nf_qw/download?force=true&w=1200" alt="Shibuya crossing" loading="lazy"><figcaption>Shibuya crossing</figcaption></figure><figure><img src="https://unsplash.com/photos/6SA2PY0eqMY/download?force=true&w=1200" alt="Intersection" loading="lazy"><figcaption>Intersection</figcaption></figure><figure><img src="https://unsplash.com/photos/ERIP-Gx_zs4/download?force=true&w=1200" alt="Manhattan street" loading="lazy"><figcaption>Manhattan street</figcaption></figure></div></section>
+  <section class="scene right" data-panel>
+    <div class="pin">
+      <img src="https://unsplash.com/photos/ERIP-Gx_zs4/download?force=true&w=1920" alt="Blurred pedestrians in Midtown Manhattan" loading="lazy">
+      <div class="num">02</div>
+      <div class="copy">
+        <div class="eyebrow">Noise</div>
+        <h2>Ten thousand<br>conversations, <em>one</em> sentence</h2>
+        <p class="lead">Listen to a street long enough and it says the same thing over and over: I am here, I am here, I am here. That chorus is the pavement&#x27;s heartbeat.</p>
+      </div>
+      <div class="caption">Photo · Unsplash</div>
     </div>
   </section>
-  <section class="panel left">
-    <div class="big-number" style="right:4vw;top:10vh">03</div>
-    <div class="card">
-      <div class="eyebrow reveal">Markets</div>
-      <h2 class="reveal">Everything for sale except the corner</h2>
-      <p class="lead reveal">You can buy the fruit, the phone, the promise of a taxi. You cannot buy the corner itself. The corner belongs to whoever is standing on it.</p>
+  <section class="scene " data-panel>
+    <div class="pin">
+      <img src="https://unsplash.com/photos/dqfHJdsGudw/download?force=true&w=1920" alt="People wait at a busy crossing" loading="lazy">
+      <div class="num">03</div>
+      <div class="copy">
+        <div class="eyebrow">Markets</div>
+        <h2>Everything for sale<br>except the <em>corner</em></h2>
+        <p class="lead">You can buy the fruit, the phone, the promise of a taxi. You cannot buy the corner itself. The corner belongs to whoever is standing on it.</p>
+      </div>
+      <div class="caption">Photo · Jason Tirta</div>
     </div>
   </section>
-  <footer class="panel">
-    <div class="eyebrow">End of layer 02</div>
-    <h2>Keep going.</h2>
-    <a class="btn" href="../03-underground/">Go Underground</a>
-    <div class="chips"><span class="chip">Overlay text</span><span class="chip">Parallax layers</span><span class="chip">Scroll-driven</span></div>
+  <section class="quote" data-panel>
+    <blockquote class="reveal">The street is the only <em>honest</em> architect.</blockquote>
+    <cite class="reveal d1">Layer two, Streets</cite>
+  </section>
+  <footer class="foot" data-panel>
+    <div>
+      <div class="eyebrow reveal">End of layer 02</div>
+      <h2 class="reveal d1">Keep <em>descending</em>.</h2>
+      <a class="btn reveal d2" href="../03-underground/">Layer 03 · Underground <span>→</span></a>
+    </div>
+    <div class="credits reveal d2"><b>Photography</b><a href="https://unsplash.com/photos/E9JJVYGoNSY" target="_blank" rel="noopener">Georgi Kalaydzhiev</a> · <a href="https://unsplash.com/photos/6SA2PY0eqMY" target="_blank" rel="noopener">Hen Kaznelson</a> · <a href="https://unsplash.com/photos/ERIP-Gx_zs4" target="_blank" rel="noopener">Unsplash</a> · <a href="https://unsplash.com/photos/dqfHJdsGudw" target="_blank" rel="noopener">Jason Tirta</a> · <a href="https://unsplash.com/photos/nz-zE4nf_qw" target="_blank" rel="noopener">Xuedi Liu</a><br>All photos via Unsplash, used under the Unsplash License.</div>
   </footer>
+  <div class="next-peek"><img src="https://unsplash.com/photos/fGhRuwFcENM/download?force=true&w=1920" alt="" loading="lazy"><a href="../03-underground/">Next: Underground →</a></div>
 </main>
 <script src="../../shared/layer.js"></script>
 </body>

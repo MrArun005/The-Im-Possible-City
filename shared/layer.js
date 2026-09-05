@@ -1,31 +1,28 @@
-/* Shared scroll engine: parallax layers, reveal-on-scroll, progress, marquee. */
+/* Scroll engine: scene progress (--p), hero zoom (--y), progress bar, reveals, parent messaging. */
 (function(){
-  const layers=[...document.querySelectorAll('.stage .layer')];
+  const scenes=[...document.querySelectorAll('.scene,.strip')];
   const progress=document.querySelector('.progress');
-  const marquees=[...document.querySelectorAll('.marquee span')];
+  const hero=document.querySelector('.hero');
   let ticking=false;
   function frame(){
     ticking=false;
-    const y=window.scrollY;
-    const max=document.documentElement.scrollHeight-window.innerHeight||1;
-    const t=Math.min(1,y/max);
-    if(progress) progress.style.width=(t*100)+'%';
-    layers.forEach(l=>{
-      const speed=parseFloat(l.dataset.speed||'0.2');
-      const rot=parseFloat(l.dataset.rotate||'0');
-      const scale=1+t*parseFloat(l.dataset.scale||'0');
-      l.style.transform=`translate3d(0,${-y*speed}px,0) rotate(${t*rot}deg) scale(${scale})`;
+    const y=window.scrollY, vh=window.innerHeight;
+    const max=document.documentElement.scrollHeight-vh||1;
+    if(progress) progress.style.width=(y/max*100)+'%';
+    if(hero) hero.style.setProperty('--y',Math.min(y,vh));
+    scenes.forEach(s=>{
+      const r=s.getBoundingClientRect();
+      const total=r.height-vh;
+      const p=total>0?Math.min(1,Math.max(0,-r.top/total)):Math.min(1,Math.max(0,(vh-r.top)/(vh+r.height)));
+      s.style.setProperty('--p',p.toFixed(4));
     });
-    marquees.forEach(m=>{const dir=m.parentElement.dataset.dir==='left'?-1:1;m.style.transform=`translateX(${dir*(-30+t*60)}%)`;});
-    document.documentElement.style.setProperty('--t',t);
   }
   window.addEventListener('scroll',()=>{if(!ticking){ticking=true;requestAnimationFrame(frame);}},{passive:true});
   window.addEventListener('resize',frame);
   frame();
-  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.2});
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.15});
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-  // tell parent (master site) which panel is active, for the embedded viewer
-  const panels=[...document.querySelectorAll('section.panel')];
-  const pio=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting&&window.parent!==window)window.parent.postMessage({type:'layer-panel',index:panels.indexOf(e.target),total:panels.length,title:document.title},'*');}),{threshold:.6});
+  const panels=[...document.querySelectorAll('[data-panel]')];
+  const pio=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting&&window.parent!==window)window.parent.postMessage({type:'layer-panel',index:panels.indexOf(e.target),total:panels.length,title:document.title},'*');}),{threshold:.5});
   panels.forEach(p=>pio.observe(p));
 })();

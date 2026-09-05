@@ -3,65 +3,79 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Horizon · The Im-Possible City · Layer 06</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,500;1,300&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<title>Horizon · The Im-Possible City</title>
 <meta name="description" content="The city ends where the possible begins.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="../../shared/layer.css">
-<style>:root{--bg:#020b12;--fg:#ecfeff;--accent:#38bdf8;--accent2:#facc15;--line:rgba(56,189,248,.22);--grad:linear-gradient(180deg,#020b12 0%,#0c3550 55%,#f0b03a 140%)}</style>
+<style>:root{--bg:#070b10;--fg:#eefaff;--accent:#ffd166}</style>
 </head>
 <body>
-<div class="progress"></div>
-<div class="stage" aria-hidden="true">
-  <div class="layer grad" data-speed="0"></div>
-  <div class="layer blob" data-speed="0.08" data-scale="0.3"></div>
-  <div class="layer grid" data-speed="0.15" data-rotate="4"></div>
-  <div class="layer shapes" data-speed="0.3" data-scale="0.15"><svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" fill="none" stroke="var(--accent)" stroke-opacity=".35" stroke-width="2"><line x1="0" y1="520" x2="1200" y2="520" stroke-width="3"/><circle cx="600" cy="520" r="160" stroke="var(--accent2)" stroke-opacity=".6"/><path d="M0 800 L600 520 L1200 800" stroke-opacity=".2"/><path d="M0 660 L600 520 L1200 660" stroke-opacity=".2"/><path d="M0 590 L600 520 L1200 590" stroke-opacity=".2"/></svg></div>
-  <div class="layer noise" data-speed="0.05"></div>
-  <div class="vignette"></div>
-</div>
-<nav class="topbar">
-  <a href="../../">← Master City</a>
-  <span>Layer 06 / 06</span>
-</nav>
+<div class="progress"></div><div class="grain"></div>
+<nav class="topbar"><a href="../../">← Master City</a><span class="idx">Layer 06 / 06</span></nav>
 <main>
-  <section class="panel hero">
-    <div class="eyebrow reveal in">Layer 06</div>
-    <h1 class="reveal in">Horizon</h1>
-    <p class="lead reveal in" style="margin-top:28px">The city ends where the possible begins.</p>
-    <div class="scroll-hint">Scroll to descend</div>
-  </section>
-  <section class="panel left">
-    <div class="big-number" style="right:4vw;top:10vh">01</div>
-    <div class="card">
-      <div class="eyebrow reveal">Edge</div>
-      <h2 class="reveal">Where the last street becomes a field</h2>
-      <p class="lead reveal">Cities do not end. They fade. A petrol station, a warehouse, a horse, a billboard for the city you just left. Then wind.</p>
+  <header class="hero" data-panel>
+    <div class="bg"><img src="https://unsplash.com/photos/a8dyRcs0VEU/download?force=true&w=2400" alt="Cars on a foggy highway at sunrise" fetchpriority="high"></div>
+    <div class="inner">
+      <div>
+        <div class="eyebrow reveal in">Layer 06 · Possible</div>
+        <h1 class="reveal in d1">Horizon</h1>
+        <p class="lead reveal in d2">The city ends where the possible begins.</p>
+      </div>
+      <div class="meta reveal in d3">Photo · Liana S<br>Scroll-driven · overlay text</div>
+    </div>
+    <div class="scroll-hint">Scroll</div>
+  </header>
+  <section class="scene " data-panel>
+    <div class="pin">
+      <img src="https://unsplash.com/photos/wnZFUkiY0Ac/download?force=true&w=1920" alt="Sun setting over a highway" loading="lazy">
+      <div class="num">01</div>
+      <div class="copy">
+        <div class="eyebrow">Edge</div>
+        <h2>Where the last street<br>becomes a <em>field</em></h2>
+        <p class="lead">Cities do not end. They fade. A petrol station, a warehouse, a horse, a billboard for the city you just left. Then wind.</p>
+      </div>
+      <div class="caption">Photo · Eastman Childs</div>
     </div>
   </section>
-  <div class="marquee" data-dir="left"><span>HORIZON · HORIZON · HORIZON · HORIZON · HORIZON ·</span></div>
-  <section class="panel right">
-    <div class="big-number" style="left:4vw;top:10vh">02</div>
-    <div class="card">
-      <div class="eyebrow reveal">Departure</div>
-      <h2 class="reveal">Everyone here is from somewhere else</h2>
-      <p class="lead reveal">The horizon is the only part of the city that belongs to everyone equally. It is the direction people arrived from and the direction they promise to leave in.</p>
+  <section class="strip"><div class="word">Possible</div><div class="track"><figure><img src="https://unsplash.com/photos/a8dyRcs0VEU/download?force=true&w=1200" alt="Foggy highway" loading="lazy"><figcaption>Foggy highway</figcaption></figure><figure><img src="https://unsplash.com/photos/HXrOeotLCcg/download?force=true&w=1200" alt="Desert road" loading="lazy"><figcaption>Desert road</figcaption></figure><figure><img src="https://unsplash.com/photos/wnZFUkiY0Ac/download?force=true&w=1200" alt="Highway at dusk" loading="lazy"><figcaption>Highway at dusk</figcaption></figure></div></section>
+  <section class="scene right" data-panel>
+    <div class="pin">
+      <img src="https://unsplash.com/photos/yL_gqdHqMiw/download?force=true&w=1920" alt="Sun setting over a city" loading="lazy">
+      <div class="num">02</div>
+      <div class="copy">
+        <div class="eyebrow">Departure</div>
+        <h2>Everyone here is from<br><em>somewhere</em> else</h2>
+        <p class="lead">The horizon is the only part of the city that belongs to everyone equally. It is the direction people arrived from and the direction they promise to leave in.</p>
+      </div>
+      <div class="caption">Photo · Amico Biswas</div>
     </div>
   </section>
-  <section class="panel left">
-    <div class="big-number" style="right:4vw;top:10vh">03</div>
-    <div class="card">
-      <div class="eyebrow reveal">Possible</div>
-      <h2 class="reveal">Im-possible means not yet</h2>
-      <p class="lead reveal">Take the hyphen out and you get a wish. Leave it in and you get a place. This city is the hyphen: the gap between what was drawn and what got built. Thank you for walking it.</p>
+  <section class="scene " data-panel>
+    <div class="pin">
+      <img src="https://unsplash.com/photos/HXrOeotLCcg/download?force=true&w=1920" alt="Sunrise over a desert highway" loading="lazy">
+      <div class="num">03</div>
+      <div class="copy">
+        <div class="eyebrow">Possible</div>
+        <h2>Im-possible<br>means <em>not yet</em></h2>
+        <p class="lead">Take the hyphen out and you get a wish. Leave it in and you get a place. This city is the hyphen: the gap between what was drawn and what got built. Thank you for walking it.</p>
+      </div>
+      <div class="caption">Photo · Sara Calado</div>
     </div>
   </section>
-  <footer class="panel">
-    <div class="eyebrow">End of layer 06</div>
-    <h2>Keep going.</h2>
-    <a class="btn" href="../../..//">Return to the Master City</a>
-    <div class="chips"><span class="chip">Overlay text</span><span class="chip">Parallax layers</span><span class="chip">Scroll-driven</span></div>
+  <section class="quote" data-panel>
+    <blockquote class="reveal">Im-possible means <em>not yet</em>.</blockquote>
+    <cite class="reveal d1">Layer six, Horizon</cite>
+  </section>
+  <footer class="foot" data-panel>
+    <div>
+      <div class="eyebrow reveal">End of layer 06</div>
+      <h2 class="reveal d1">Keep <em>descending</em>.</h2>
+      <a class="btn reveal d2" href="../../">Back to the Master City <span>→</span></a>
+    </div>
+    <div class="credits reveal d2"><b>Photography</b><a href="https://unsplash.com/photos/a8dyRcs0VEU" target="_blank" rel="noopener">Liana S</a> · <a href="https://unsplash.com/photos/wnZFUkiY0Ac" target="_blank" rel="noopener">Eastman Childs</a> · <a href="https://unsplash.com/photos/yL_gqdHqMiw" target="_blank" rel="noopener">Amico Biswas</a> · <a href="https://unsplash.com/photos/HXrOeotLCcg" target="_blank" rel="noopener">Sara Calado</a><br>All photos via Unsplash, used under the Unsplash License.</div>
   </footer>
+  <div class="next-peek"><img src="https://unsplash.com/photos/3mdHgIGJdrM/download?force=true&w=1920" alt="" loading="lazy"><a href="../../">Return to the Master City →</a></div>
 </main>
 <script src="../../shared/layer.js"></script>
 </body>

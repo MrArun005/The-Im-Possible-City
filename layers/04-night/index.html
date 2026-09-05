@@ -3,65 +3,79 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Night · The Im-Possible City · Layer 04</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,500;1,300&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<title>Night · The Im-Possible City</title>
 <meta name="description" content="The city switches on when the city switches off.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="../../shared/layer.css">
-<style>:root{--bg:#0a0010;--fg:#fdf4ff;--accent:#e879f9;--accent2:#22d3ee;--line:rgba(232,121,249,.25);--grad:linear-gradient(180deg,#0a0010 0%,#2a0838 50%,#001a24 100%)}</style>
+<style>:root{--bg:#0a0611;--fg:#fbf2ff;--accent:#ff7ad9}</style>
 </head>
 <body>
-<div class="progress"></div>
-<div class="stage" aria-hidden="true">
-  <div class="layer grad" data-speed="0"></div>
-  <div class="layer blob" data-speed="0.08" data-scale="0.3"></div>
-  <div class="layer grid" data-speed="0.15" data-rotate="4"></div>
-  <div class="layer shapes" data-speed="0.3" data-scale="0.15"><svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" fill="none" stroke-width="3"><g stroke="var(--accent)" stroke-opacity=".5"><rect x="80" y="120" width="300" height="90" rx="8"/><rect x="820" y="520" width="280" height="80" rx="8"/><path d="M120 160 h220 M140 190 h120" /></g><g stroke="var(--accent2)" stroke-opacity=".5"><rect x="700" y="90" width="200" height="60" rx="6"/><rect x="150" y="560" width="260" height="120" rx="8"/><path d="M190 600 h180 M190 640 h90"/></g></svg></div>
-  <div class="layer noise" data-speed="0.05"></div>
-  <div class="vignette"></div>
-</div>
-<nav class="topbar">
-  <a href="../../">← Master City</a>
-  <span>Layer 04 / 06</span>
-</nav>
+<div class="progress"></div><div class="grain"></div>
+<nav class="topbar"><a href="../../">← Master City</a><span class="idx">Layer 04 / 06</span></nav>
 <main>
-  <section class="panel hero">
-    <div class="eyebrow reveal in">Layer 04</div>
-    <h1 class="reveal in">Night</h1>
-    <p class="lead reveal in" style="margin-top:28px">The city switches on when the city switches off.</p>
-    <div class="scroll-hint">Scroll to descend</div>
-  </section>
-  <section class="panel left">
-    <div class="big-number" style="right:4vw;top:10vh">01</div>
-    <div class="card">
-      <div class="eyebrow reveal">Neon</div>
-      <h2 class="reveal">Letters that hum</h2>
-      <p class="lead reveal">The signs speak a language of buzz and pink. OPEN. HOTEL. NOODLES. HOPE. Half the letters are broken, which is how you know they are telling the truth.</p>
+  <header class="hero" data-panel>
+    <div class="bg"><img src="https://unsplash.com/photos/uZA3P4sA3tM/download?force=true&w=2400" alt="Wet city street at night with neon" fetchpriority="high"></div>
+    <div class="inner">
+      <div>
+        <div class="eyebrow reveal in">Layer 04 · Neon</div>
+        <h1 class="reveal in d1">Night</h1>
+        <p class="lead reveal in d2">The city switches on when the city switches off.</p>
+      </div>
+      <div class="meta reveal in d3">Photo · masahiro miyagi<br>Scroll-driven · overlay text</div>
+    </div>
+    <div class="scroll-hint">Scroll</div>
+  </header>
+  <section class="scene " data-panel>
+    <div class="pin">
+      <img src="https://unsplash.com/photos/GU8CEZReKxs/download?force=true&w=1920" alt="Neon signs in Shinjuku" loading="lazy">
+      <div class="num">01</div>
+      <div class="copy">
+        <div class="eyebrow">Neon</div>
+        <h2>Letters<br>that <em>hum</em></h2>
+        <p class="lead">The signs speak a language of buzz and pink. OPEN. HOTEL. NOODLES. HOPE. Half the letters are broken, which is how you know they are telling the truth.</p>
+      </div>
+      <div class="caption">Photo · Unsplash</div>
     </div>
   </section>
-  <div class="marquee" data-dir="left"><span>NIGHT · NIGHT · NIGHT · NIGHT · NIGHT ·</span></div>
-  <section class="panel right">
-    <div class="big-number" style="left:4vw;top:10vh">02</div>
-    <div class="card">
-      <div class="eyebrow reveal">Insomnia</div>
-      <h2 class="reveal">Four million people, one shared dream</h2>
-      <p class="lead reveal">At 3 a.m. the city is a single organism dreaming about itself. The taxis are its blood. The bakeries are its first thought of morning.</p>
+  <section class="strip"><div class="word">Neon</div><div class="track"><figure><img src="https://unsplash.com/photos/mGfUD56sh7E/download?force=true&w=1200" alt="Tokyo neon in rain" loading="lazy"><figcaption>Tokyo neon in rain</figcaption></figure><figure><img src="https://unsplash.com/photos/Gm_1cfBvW0I/download?force=true&w=1200" alt="Narrow neon street" loading="lazy"><figcaption>Narrow neon street</figcaption></figure><figure><img src="https://unsplash.com/photos/GZIk-Sq9PGg/download?force=true&w=1200" alt="Neon lights in rain" loading="lazy"><figcaption>Neon lights in rain</figcaption></figure></div></section>
+  <section class="scene right" data-panel>
+    <div class="pin">
+      <img src="https://unsplash.com/photos/Y8r-9RMmhl0/download?force=true&w=1920" alt="Rainy neon street in Japan" loading="lazy">
+      <div class="num">02</div>
+      <div class="copy">
+        <div class="eyebrow">Insomnia</div>
+        <h2>Four million people,<br><em>one</em> shared dream</h2>
+        <p class="lead">At 3 a.m. the city is a single organism dreaming about itself. The taxis are its blood. The bakeries are its first thought of morning.</p>
+      </div>
+      <div class="caption">Photo · Darien Attridge</div>
     </div>
   </section>
-  <section class="panel left">
-    <div class="big-number" style="right:4vw;top:10vh">03</div>
-    <div class="card">
-      <div class="eyebrow reveal">Shadows</div>
-      <h2 class="reveal">Where the light lands, it leaves a twin</h2>
-      <p class="lead reveal">Every streetlamp casts a second city, longer and quieter than the first. Walk into it and the noise stops. Walk out and you have aged an hour.</p>
+  <section class="scene " data-panel>
+    <div class="pin">
+      <img src="https://unsplash.com/photos/G0KVzxBb2xo/download?force=true&w=1920" alt="Rainy Osaka street with neon" loading="lazy">
+      <div class="num">03</div>
+      <div class="copy">
+        <div class="eyebrow">Shadows</div>
+        <h2>Where the light lands,<br>it leaves a <em>twin</em></h2>
+        <p class="lead">Every streetlamp casts a second city, longer and quieter than the first. Walk into it and the noise stops. Walk out and you have aged an hour.</p>
+      </div>
+      <div class="caption">Photo · Cuvii</div>
     </div>
   </section>
-  <footer class="panel">
-    <div class="eyebrow">End of layer 04</div>
-    <h2>Keep going.</h2>
-    <a class="btn" href="../05-memory/">Enter the Memory</a>
-    <div class="chips"><span class="chip">Overlay text</span><span class="chip">Parallax layers</span><span class="chip">Scroll-driven</span></div>
+  <section class="quote" data-panel>
+    <blockquote class="reveal">Half the letters are <em>broken</em>. That is how you know they are honest.</blockquote>
+    <cite class="reveal d1">Layer four, Night</cite>
+  </section>
+  <footer class="foot" data-panel>
+    <div>
+      <div class="eyebrow reveal">End of layer 04</div>
+      <h2 class="reveal d1">Keep <em>descending</em>.</h2>
+      <a class="btn reveal d2" href="../05-memory/">Layer 05 · Memory <span>→</span></a>
+    </div>
+    <div class="credits reveal d2"><b>Photography</b><a href="https://unsplash.com/photos/uZA3P4sA3tM" target="_blank" rel="noopener">masahiro miyagi</a> · <a href="https://unsplash.com/photos/GU8CEZReKxs" target="_blank" rel="noopener">Unsplash</a> · <a href="https://unsplash.com/photos/Y8r-9RMmhl0" target="_blank" rel="noopener">Darien Attridge</a> · <a href="https://unsplash.com/photos/G0KVzxBb2xo" target="_blank" rel="noopener">Cuvii</a> · <a href="https://unsplash.com/photos/mGfUD56sh7E" target="_blank" rel="noopener">Raphael Lopes</a> · <a href="https://unsplash.com/photos/Gm_1cfBvW0I" target="_blank" rel="noopener">Unsplash</a> · <a href="https://unsplash.com/photos/GZIk-Sq9PGg" target="_blank" rel="noopener">Unsplash</a><br>All photos via Unsplash, used under the Unsplash License.</div>
   </footer>
+  <div class="next-peek"><img src="https://unsplash.com/photos/lvm42d3fsEw/download?force=true&w=1920" alt="" loading="lazy"><a href="../05-memory/">Next: Memory →</a></div>
 </main>
 <script src="../../shared/layer.js"></script>
 </body>

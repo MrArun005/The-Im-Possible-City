@@ -1,0 +1,36 @@
+name: Fetch and verify HD images
+
+on:
+  workflow_dispatch:
+    inputs:
+      refresh:
+        description: Re-download every image even if present
+        type: boolean
+        default: false
+  push:
+    branches: [main, claude/website-skills-assessment-13fnkn]
+    paths: [assets/images.json, scripts/fetch_images.py]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: images
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download images
+        env:
+          REFRESH: ${{ inputs.refresh && '1' || '' }}
+        run: python3 scripts/fetch_images.py || echo "some slots failed (see log)"
+      - name: Commit images
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A assets/img assets/credits.json
+          git diff --cached --quiet || git commit -m "Add verified HD images and credits [skip ci]"
+          git push

@@ -1,0 +1,32 @@
+name: Enable GitHub Pages (one-off)
+
+on:
+  workflow_dispatch:
+    inputs:
+      pat:
+        description: Fine-grained PAT with Pages read/write on this repo (used once, not stored)
+        required: true
+        type: string
+
+permissions: {}
+
+jobs:
+  enable:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Pages site from gh-pages branch
+        env:
+          PAT: ${{ inputs.pat }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo "::add-mask::$PAT"
+          code=$(curl -s -o resp.json -w '%{http_code}' -X POST \
+            -H "Authorization: Bearer $PAT" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPO/pages" \
+            -d '{"source":{"branch":"gh-pages","path":"/"}}')
+          echo "create status: $code"; cat resp.json; echo
+          if [ "$code" = "409" ]; then
+            curl -s -X PUT -H "Authorization: Bearer $PAT" -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/$REPO/pages" -d '{"source":{"branch":"gh-pages","path":"/"}}'
+          fi
+          curl -s -H "Authorization: Bearer $PAT" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$REPO/pages"

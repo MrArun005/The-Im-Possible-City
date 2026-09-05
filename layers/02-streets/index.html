@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Streets · The Im-Possible City · Layer 02</title>
+<meta name="description" content="A map drawn by feet, redrawn every morning.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="../../shared/layer.css">
+<style>:root{--bg:#0c0a09;--fg:#fafaf9;--accent:#fb923c;--accent2:#f43f5e;--line:rgba(251,146,60,.25);--grad:linear-gradient(180deg,#0c0a09 0%,#2a1408 55%,#3b0a1c 100%)}</style>
+</head>
+<body>
+<div class="progress"></div>
+<div class="stage" aria-hidden="true">
+  <div class="layer grad" data-speed="0"></div>
+  <div class="layer blob" data-speed="0.08" data-scale="0.3"></div>
+  <div class="layer grid" data-speed="0.15" data-rotate="4"></div>
+  <div class="layer shapes" data-speed="0.3" data-scale="0.15"><svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" fill="none" stroke="var(--accent)" stroke-opacity=".3" stroke-width="2"><path d="M0 700 L1200 100"/><path d="M0 100 L1200 700"/><path d="M600 0 L600 800"/><path d="M0 400 L1200 400"/><path d="M0 550 Q600 300 1200 550" stroke="var(--accent2)"/><path d="M0 250 Q600 500 1200 250" stroke="var(--accent2)"/><circle cx="600" cy="400" r="120" stroke-dasharray="6 10"/><circle cx="600" cy="400" r="260" stroke-dasharray="2 14"/></svg></div>
+  <div class="layer noise" data-speed="0.05"></div>
+  <div class="vignette"></div>
+</div>
+<nav class="topbar">
+  <a href="../../">← Master City</a>
+  <span>Layer 02 / 06</span>
+</nav>
+<main>
+  <section class="panel hero">
+    <div class="eyebrow reveal in">Layer 02</div>
+    <h1 class="reveal in">Streets</h1>
+    <p class="lead reveal in" style="margin-top:28px">A map drawn by feet, redrawn every morning.</p>
+    <div class="scroll-hint">Scroll to descend</div>
+  </section>
+  <section class="panel left">
+    <div class="big-number" style="right:4vw;top:10vh">01</div>
+    <div class="card">
+      <div class="eyebrow reveal">Desire lines</div>
+      <h2 class="reveal">The shortest path is a footprint</h2>
+      <p class="lead reveal">Planners draw the avenues. People draw the shortcuts. Where the two disagree, grass dies and the real city appears, one worn diagonal at a time.</p>
+    </div>
+  </section>
+  <div class="marquee" data-dir="left"><span>STREETS · STREETS · STREETS · STREETS · STREETS ·</span></div>
+  <section class="panel right">
+    <div class="big-number" style="left:4vw;top:10vh">02</div>
+    <div class="card">
+      <div class="eyebrow reveal">Noise</div>
+      <h2 class="reveal">Ten thousand conversations, one sentence</h2>
+      <p class="lead reveal">Listen to a street long enough and it says the same thing over and over: I am here, I am here, I am here. That chorus is the pavement&#x27;s heartbeat.</p>
+    </div>
+  </section>
+  <section class="panel left">
+    <div class="big-number" style="right:4vw;top:10vh">03</div>
+    <div class="card">
+      <div class="eyebrow reveal">Markets</div>
+      <h2 class="reveal">Everything for sale except the corner</h2>
+      <p class="lead reveal">You can buy the fruit, the phone, the promise of a taxi. You cannot buy the corner itself. The corner belongs to whoever is standing on it.</p>
+    </div>
+  </section>
+  <footer class="panel">
+    <div class="eyebrow">End of layer 02</div>
+    <h2>Keep going.</h2>
+    <a class="btn" href="../03-underground/">Go Underground</a>
+    <div class="chips"><span class="chip">Overlay text</span><span class="chip">Parallax layers</span><span class="chip">Scroll-driven</span></div>
+  </footer>
+</main>
+<script src="../../shared/layer.js"></script>
+</body>
+</html>

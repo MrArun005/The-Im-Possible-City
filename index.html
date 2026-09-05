@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Im-Possible City</title>
+<meta name="description" content="Six scroll-driven overlay-text layers, gathered into one master city.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="shared/layer.css">
+<style>
+:root{--bg:#07070b;--fg:#f4f4f6;--accent:#ffffff;--accent2:#7dd3fc;--line:rgba(255,255,255,.18);--grad:radial-gradient(ellipse at 50% 0%,#1b1b2f 0%,#07070b 70%)}
+.tiles{position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;padding:0 6vw 12vh;max-width:1400px;margin:0 auto}
+.tile{position:relative;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;min-height:320px;padding:28px;border-radius:20px;text-decoration:none;background:linear-gradient(160deg,var(--tilebg),color-mix(in srgb,var(--tilebg) 60%,var(--accent2) 40%));border:1px solid rgba(255,255,255,.08);overflow:hidden;transition:transform .35s cubic-bezier(.2,.7,.2,1),border-color .35s}
+.tile::before{content:"";position:absolute;inset:auto -30% -40% auto;width:70%;aspect-ratio:1;border-radius:50%;background:var(--accent);filter:blur(60px);opacity:.45;transition:opacity .35s}
+.tile:hover{transform:translateY(-6px);border-color:var(--accent)}
+.tile:hover::before{opacity:.8}
+.tile .num{font-size:12px;letter-spacing:.3em;color:var(--accent)}
+.tile .name{font-size:2.4rem;font-weight:800;letter-spacing:-.02em;line-height:1}
+.tile .tag{opacity:.8;font-size:.95rem;max-width:34ch}
+.tile .open{margin-top:10px;font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent)}
+.viewer{position:relative;z-index:1;padding:14vh 6vw 14vh;max-width:1400px;margin:0 auto}
+.viewer-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:20px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tabs button{background:transparent;color:var(--fg);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:8px 16px;font:inherit;font-size:12px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.tabs button.active,.tabs button:hover{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.frame{position:relative;width:100%;aspect-ratio:16/9;min-height:480px;border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,.12);background:#000;box-shadow:0 40px 100px rgba(0,0,0,.6)}
+.frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.status{margin-top:14px;font-size:12px;letter-spacing:.15em;text-transform:uppercase;opacity:.65;display:flex;justify-content:space-between}
+.stack{position:relative;z-index:1;padding:8vh 6vw;max-width:1000px;margin:0 auto}
+.stack .row{display:grid;grid-template-columns:70px 1fr;gap:20px;padding:26px 0;border-top:1px solid rgba(255,255,255,.12)}
+.stack .row:last-child{border-bottom:1px solid rgba(255,255,255,.12)}
+.stack .row b{font-size:1.4rem}
+.stack .row .n{font-size:1.6rem;font-weight:900;opacity:.35}
+@media (max-width:640px){.frame{min-height:70vh}}
+</style>
+</head>
+<body>
+<div class="progress"></div>
+<div class="stage" aria-hidden="true">
+  <div class="layer grad" data-speed="0"></div>
+  <div class="layer grid" data-speed="0.12" data-rotate="3"></div>
+  <div class="layer noise" data-speed="0.04"></div>
+  <div class="vignette"></div>
+</div>
+<nav class="topbar">
+  <a href="#top">The Im-Possible City</a>
+  <a href="#layers">Layers</a>
+</nav>
+<main id="top">
+  <section class="panel hero">
+    <div class="eyebrow reveal in">Master site · six overlay layers</div>
+    <h1 class="reveal in">The Im-Possible<br>City</h1>
+    <p class="lead reveal in" style="margin-top:28px">One city, six scroll-driven layers of overlaid text. Explore each layer as its own website, or walk all of them from here.</p>
+    <a class="btn" href="#layers">Enter the city</a>
+    <div class="scroll-hint">Scroll</div>
+  </section>
+
+  <section class="viewer" id="viewer">
+    <div class="viewer-head">
+      <div>
+        <div class="eyebrow">Live viewer</div>
+        <h2 style="margin:0" id="viewer-title">Skyline</h2>
+      </div>
+      <div class="tabs" id="tabs"></div>
+    </div>
+    <div class="frame"><iframe id="frame" src="layers/01-skyline/" title="Layer viewer" loading="lazy"></iframe></div>
+    <div class="status"><span id="status-left">Layer 01 / 06</span><span id="status-right">Scroll inside the frame · <a href="layers/01-skyline/" id="fullscreen">open full screen</a></span></div>
+  </section>
+
+  <section class="panel" id="layers" style="min-height:auto;padding-bottom:6vh">
+    <div class="card" style="max-width:none;text-align:center">
+      <div class="eyebrow reveal">All layers</div>
+      <h2 class="reveal">Pick a layer</h2>
+      <p class="lead reveal" style="margin:0 auto">Each tile is a standalone website with its own palette, parallax stage and overlay text. They chain into each other from top to bottom.</p>
+    </div>
+  </section>
+  <div class="tiles">
+    <a class="tile reveal" href="layers/01-skyline/" data-slug="01-skyline" style="--accent:#7dd3fc;--accent2:#a78bfa;--tilebg:#05060a">
+      <span class="num">01</span>
+      <span class="name">Skyline</span>
+      <span class="tag">The city you see first is the one that never existed.</span>
+      <span class="open">Open layer →</span>
+    </a>
+    <a class="tile reveal" href="layers/02-streets/" data-slug="02-streets" style="--accent:#fb923c;--accent2:#f43f5e;--tilebg:#0c0a09">
+      <span class="num">02</span>
+      <span class="name">Streets</span>
+      <span class="tag">A map drawn by feet, redrawn every morning.</span>
+      <span class="open">Open layer →</span>
+    </a>
+    <a class="tile reveal" href="layers/03-underground/" data-slug="03-underground" style="--accent:#34d399;--accent2:#0ea5e9;--tilebg:#020617">
+      <span class="num">03</span>
+      <span class="name">Underground</span>
+      <span class="tag">What the city hides, it hides beneath itself.</span>
+      <span class="open">Open layer →</span>
+    </a>
+    <a class="tile reveal" href="layers/04-night/" data-slug="04-night" style="--accent:#e879f9;--accent2:#22d3ee;--tilebg:#0a0010">
+      <span class="num">04</span>
+      <span class="name">Night</span>
+      <span class="tag">The city switches on when the city switches off.</span>
+      <span class="open">Open layer →</span>
+    </a>
+    <a class="tile reveal" href="layers/05-memory/" data-slug="05-memory" style="--accent:#fbbf24;--accent2:#b45309;--tilebg:#0f0e0a">
+      <span class="num">05</span>
+      <span class="name">Memory</span>
+      <span class="tag">A city is a story that outlives its narrators.</span>
+      <span class="open">Open layer →</span>
+    </a>
+    <a class="tile reveal" href="layers/06-horizon/" data-slug="06-horizon" style="--accent:#38bdf8;--accent2:#facc15;--tilebg:#020b12">
+      <span class="num">06</span>
+      <span class="name">Horizon</span>
+      <span class="tag">The city ends where the possible begins.</span>
+      <span class="open">Open layer →</span>
+    </a>
+  </div>
+
+  <section class="stack">
+    <div class="eyebrow">How it is built</div>
+    <h2>Layers on layers</h2>
+    <div class="row"><span class="n">1</span><div><b>Stage</b><p class="lead">A fixed stack of gradient, blob, grid, vector and noise layers, each moving at its own parallax speed as you scroll.</p></div></div>
+    <div class="row"><span class="n">2</span><div><b>Overlay text</b><p class="lead">Text panels float above the stage and reveal as they enter the viewport. Giant faded numbers mark each chapter.</p></div></div>
+    <div class="row"><span class="n">3</span><div><b>Master</b><p class="lead">This page gathers all six sites, previews any of them live in a frame, and links out to each as a full website.</p></div></div>
+  </section>
+
+  <footer class="panel">
+    <div class="eyebrow">The Im-Possible City</div>
+    <h2>Start at the top.</h2>
+    <a class="btn" href="layers/01-skyline/">Layer 01 · Skyline</a>
+  </footer>
+</main>
+<script src="shared/layer.js"></script>
+<script>
+const LAYERS=[{"slug": "01-skyline", "num": "01", "name": "Skyline", "tagline": "The city you see first is the one that never existed.", "accent": "#7dd3fc", "bg": "#05060a"}, {"slug": "02-streets", "num": "02", "name": "Streets", "tagline": "A map drawn by feet, redrawn every morning.", "accent": "#fb923c", "bg": "#0c0a09"}, {"slug": "03-underground", "num": "03", "name": "Underground", "tagline": "What the city hides, it hides beneath itself.", "accent": "#34d399", "bg": "#020617"}, {"slug": "04-night", "num": "04", "name": "Night", "tagline": "The city switches on when the city switches off.", "accent": "#e879f9", "bg": "#0a0010"}, {"slug": "05-memory", "num": "05", "name": "Memory", "tagline": "A city is a story that outlives its narrators.", "accent": "#fbbf24", "bg": "#0f0e0a"}, {"slug": "06-horizon", "num": "06", "name": "Horizon", "tagline": "The city ends where the possible begins.", "accent": "#38bdf8", "bg": "#020b12"}];
+const tabs=document.getElementById('tabs'),frame=document.getElementById('frame'),vt=document.getElementById('viewer-title'),sl=document.getElementById('status-left'),fs=document.getElementById('fullscreen');
+function show(i){const L=LAYERS[i];frame.src='layers/'+L.slug+'/';vt.textContent=L.name;sl.textContent='Layer '+L.num+' / 06';fs.href='layers/'+L.slug+'/';[...tabs.children].forEach((b,j)=>b.classList.toggle('active',j===i));document.documentElement.style.setProperty('--accent2',L.accent);}
+LAYERS.forEach((L,i)=>{const b=document.createElement('button');b.textContent=L.num+' '+L.name;b.onclick=()=>show(i);tabs.appendChild(b);});
+show(0);
+window.addEventListener('message',e=>{if(e.data&&e.data.type==='layer-panel')sl.textContent=vt.textContent+' · panel '+(e.data.index+1)+' / '+e.data.total;});
+</script>
+</body>
+</html>

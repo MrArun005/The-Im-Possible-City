@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Skyline · The Im-Possible City · Layer 01</title>
+<meta name="description" content="The city you see first is the one that never existed.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="../../shared/layer.css">
+<style>:root{--bg:#05060a;--fg:#f4f4f6;--accent:#7dd3fc;--accent2:#a78bfa;--line:rgba(125,211,252,.25);--grad:linear-gradient(180deg,#05060a 0%,#0b1230 60%,#1b1040 100%)}</style>
+</head>
+<body>
+<div class="progress"></div>
+<div class="stage" aria-hidden="true">
+  <div class="layer grad" data-speed="0"></div>
+  <div class="layer blob" data-speed="0.08" data-scale="0.3"></div>
+  <div class="layer grid" data-speed="0.15" data-rotate="4"></div>
+  <div class="layer shapes" data-speed="0.3" data-scale="0.15"><svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMax slice" fill="none" stroke="var(--accent)" stroke-opacity=".35"><g><rect x="20" y="380" width="60" height="420" /><rect x="100" y="500" width="40" height="300" /><rect x="160" y="240" width="90" height="560" /><rect x="270" y="420" width="50" height="380" /><rect x="340" y="100" width="120" height="700" /><rect x="480" y="350" width="70" height="450" /><rect x="570" y="540" width="40" height="260" /><rect x="630" y="180" width="110" height="620" /><rect x="760" y="460" width="60" height="340" /><rect x="840" y="280" width="90" height="520" /><rect x="950" y="390" width="50" height="410" /><rect x="1020" y="140" width="140" height="660" /><rect x="1170" y="560" width="30" height="240" /></g></svg></div>
+  <div class="layer noise" data-speed="0.05"></div>
+  <div class="vignette"></div>
+</div>
+<nav class="topbar">
+  <a href="../../">← Master City</a>
+  <span>Layer 01 / 06</span>
+</nav>
+<main>
+  <section class="panel hero">
+    <div class="eyebrow reveal in">Layer 01</div>
+    <h1 class="reveal in">Skyline</h1>
+    <p class="lead reveal in" style="margin-top:28px">The city you see first is the one that never existed.</p>
+    <div class="scroll-hint">Scroll to descend</div>
+  </section>
+  <section class="panel left">
+    <div class="big-number" style="right:4vw;top:10vh">01</div>
+    <div class="card">
+      <div class="eyebrow reveal">Vertical</div>
+      <h2 class="reveal">Towers built from promises</h2>
+      <p class="lead reveal">Every skyline is a graph of what a city believed about itself. The tallest lines are the loudest beliefs. Scroll down and watch them thin out into the streets where people actually live.</p>
+    </div>
+  </section>
+  <div class="marquee" data-dir="left"><span>SKYLINE · SKYLINE · SKYLINE · SKYLINE · SKYLINE ·</span></div>
+  <section class="panel right">
+    <div class="big-number" style="left:4vw;top:10vh">02</div>
+    <div class="card">
+      <div class="eyebrow reveal">Glass</div>
+      <h2 class="reveal">Windows that only face inward</h2>
+      <p class="lead reveal">A million lit rectangles, each one a life pretending not to be watched. The Im-Possible City is made of these: glances that never meet, floors that never touch the ground.</p>
+    </div>
+  </section>
+  <section class="panel left">
+    <div class="big-number" style="right:4vw;top:10vh">03</div>
+    <div class="card">
+      <div class="eyebrow reveal">Weather</div>
+      <h2 class="reveal">Clouds rented by the hour</h2>
+      <p class="lead reveal">Above the 90th floor the fog is a subscription. Below it, the rain still falls for free. This is the first contradiction. There are five more layers beneath you.</p>
+    </div>
+  </section>
+  <footer class="panel">
+    <div class="eyebrow">End of layer 01</div>
+    <h2>Keep going.</h2>
+    <a class="btn" href="../02-streets/">Descend to the Streets</a>
+    <div class="chips"><span class="chip">Overlay text</span><span class="chip">Parallax layers</span><span class="chip">Scroll-driven</span></div>
+  </footer>
+</main>
+<script src="../../shared/layer.js"></script>
+</body>
+</html>

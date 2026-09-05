@@ -1,254 +1,170 @@
 {
  "01-skyline-hero": {
-  "unsplash": "3mdHgIGJdrM",
-  "by": "Klaus Birner",
-  "alt": "Aerial view of a city skyline at dusk",
-  "query": "aerial city skyline dusk skyscrapers"
+  "query": "Hong Kong skyline Victoria Harbour night",
+  "alt": "Hong Kong skyline Victoria Harbour night"
  },
  "01-skyline-s1": {
-  "unsplash": "ng68bl7t5UU",
-  "by": "Unsplash",
-  "alt": "Merdeka 118 at dusk over Kuala Lumpur",
-  "query": "skyscraper glass facade night city"
+  "query": "Shanghai Pudong skyline dusk",
+  "alt": "Shanghai Pudong skyline dusk"
  },
  "01-skyline-s2": {
-  "unsplash": "gEgq0G_zeFk",
-  "by": "Unsplash",
-  "alt": "Chicago skyline from above at night",
-  "query": "city skyline fog clouds towers"
+  "query": "skyscraper glass facade looking up",
+  "alt": "skyscraper glass facade looking up"
  },
  "01-skyline-s3": {
-  "unsplash": "VHXs4-7AuJI",
-  "by": "Lerone Pieters",
-  "alt": "New York from above at dusk",
-  "query": "city skyline night lights"
+  "query": "Dubai skyline fog aerial",
+  "alt": "Dubai skyline fog aerial"
  },
  "01-skyline-p1": {
-  "unsplash": "lX15PPrQurg",
-  "by": "Unsplash",
-  "alt": "Skyscrapers lit at night",
-  "query": "city skyline night lights"
+  "query": "Chicago skyline night aerial",
+  "alt": "Chicago skyline night aerial"
  },
  "01-skyline-p2": {
-  "unsplash": "XuMFb5DjVZU",
-  "by": "Unsplash",
-  "alt": "City skyline at night",
-  "query": "skyscrapers night cityscape"
+  "query": "Manhattan skyline dusk",
+  "alt": "Manhattan skyline dusk"
  },
  "01-skyline-p3": {
-  "unsplash": "9fegB0wyZIE",
-  "by": "Unsplash",
-  "alt": "City skyline during night time",
-  "query": "downtown skyline twilight"
+  "query": "Singapore skyline Marina Bay night",
+  "alt": "Singapore skyline Marina Bay night"
  },
  "02-streets-hero": {
-  "unsplash": "E9JJVYGoNSY",
-  "by": "Georgi Kalaydzhiev",
-  "alt": "Crowd crossing Shibuya at sunset",
-  "query": "busy pedestrian crossing crowd city street"
+  "query": "Shibuya crossing crowd night",
+  "alt": "Shibuya crossing crowd night"
  },
  "02-streets-s1": {
-  "unsplash": "6SA2PY0eqMY",
-  "by": "Hen Kaznelson",
-  "alt": "People cross a busy intersection",
-  "query": "city street crowd walking"
+  "query": "Times Square crowd night",
+  "alt": "Times Square crowd night"
  },
  "02-streets-s2": {
-  "unsplash": "ERIP-Gx_zs4",
-  "by": "Unsplash",
-  "alt": "Blurred pedestrians in Midtown Manhattan",
-  "query": "busy street market night city"
+  "query": "Hanoi street motorbikes traffic",
+  "alt": "Hanoi street motorbikes traffic"
  },
  "02-streets-s3": {
-  "unsplash": "dqfHJdsGudw",
-  "by": "Jason Tirta",
-  "alt": "People wait at a busy crossing",
-  "query": "street crowd pedestrians"
+  "query": "Istanbul Istiklal street crowd",
+  "alt": "Istanbul Istiklal street crowd"
  },
  "02-streets-p1": {
-  "unsplash": "nz-zE4nf_qw",
-  "by": "Xuedi Liu",
-  "alt": "Shibuya crossing",
-  "query": "street crowd pedestrians"
+  "query": "Oxford Street London crowd",
+  "alt": "Oxford Street London crowd"
  },
  "02-streets-p2": {
-  "unsplash": "6SA2PY0eqMY",
-  "by": "Hen Kaznelson",
-  "alt": "Intersection",
-  "query": "city street traffic long exposure"
+  "query": "Bangkok Yaowarat Chinatown night street",
+  "alt": "Bangkok Yaowarat Chinatown night street"
  },
  "02-streets-p3": {
-  "unsplash": "ERIP-Gx_zs4",
-  "by": "Unsplash",
-  "alt": "Manhattan street",
-  "query": "street market crowd"
+  "query": "Mumbai crowded street market",
+  "alt": "Mumbai crowded street market"
  },
  "03-underground-hero": {
-  "unsplash": "fGhRuwFcENM",
-  "by": "Sylwia Bartyzel",
-  "alt": "Stockholm metro station, red walls",
-  "query": "metro station platform underground"
+  "query": "Stockholm metro station T-Centralen",
+  "alt": "Stockholm metro station T-Centralen"
  },
  "03-underground-s1": {
-  "unsplash": "83obwRJUCes",
-  "by": "Unsplash",
-  "alt": "Train coming out of a tunnel",
-  "query": "subway train tunnel motion"
+  "query": "London Underground tunnel train motion",
+  "alt": "London Underground tunnel train motion"
  },
  "03-underground-s2": {
-  "unsplash": "LxJgwkEOTIY",
-  "by": "Tobias Reich",
-  "alt": "Long yellow tunnel, Munich",
-  "query": "underground tunnel lights corridor"
+  "query": "Moscow Metro station Komsomolskaya",
+  "alt": "Moscow Metro station Komsomolskaya"
  },
  "03-underground-s3": {
-  "unsplash": "nmxkBJ0I1Es",
-  "by": "Unsplash",
-  "alt": "Light trails under a tunnel",
-  "query": "subway station escalator"
+  "query": "Berlin U-Bahn station platform",
+  "alt": "Berlin U-Bahn station platform"
  },
  "03-underground-p1": {
-  "unsplash": "LxJgwkEOTIY",
-  "by": "Tobias Reich",
-  "alt": "Yellow tunnel",
-  "query": "subway station escalator"
+  "query": "London Underground escalator",
+  "alt": "London Underground escalator"
  },
  "03-underground-p2": {
-  "unsplash": "fGhRuwFcENM",
-  "by": "Sylwia Bartyzel",
-  "alt": "Red station",
-  "query": "metro tunnel light trails"
+  "query": "Naples metro Toledo station",
+  "alt": "Naples metro Toledo station"
  },
  "03-underground-p3": {
-  "unsplash": "83obwRJUCes",
-  "by": "Unsplash",
-  "alt": "Train and tunnel",
-  "query": "underground pedestrian tunnel"
+  "query": "Munich U-Bahn Westfriedhof station",
+  "alt": "Munich U-Bahn Westfriedhof station"
  },
  "04-night-hero": {
-  "unsplash": "uZA3P4sA3tM",
-  "by": "masahiro miyagi",
-  "alt": "Wet city street at night with neon",
-  "query": "neon signs street night rain"
+  "query": "Kabukicho Shinjuku neon night",
+  "alt": "Kabukicho Shinjuku neon night"
  },
  "04-night-s1": {
-  "unsplash": "GU8CEZReKxs",
-  "by": "Unsplash",
-  "alt": "Neon signs in Shinjuku",
-  "query": "neon lights city street night"
+  "query": "Hong Kong neon signs street night",
+  "alt": "Hong Kong neon signs street night"
  },
  "04-night-s2": {
-  "unsplash": "Y8r-9RMmhl0",
-  "by": "Darien Attridge",
-  "alt": "Rainy neon street in Japan",
-  "query": "rainy night street reflections neon"
+  "query": "Dotonbori Osaka night neon",
+  "alt": "Dotonbori Osaka night neon"
  },
  "04-night-s3": {
-  "unsplash": "G0KVzxBb2xo",
-  "by": "Cuvii",
-  "alt": "Rainy Osaka street with neon",
-  "query": "neon sign shopfront night"
+  "query": "rainy street night reflections neon lights",
+  "alt": "rainy street night reflections neon lights"
  },
  "04-night-p1": {
-  "unsplash": "mGfUD56sh7E",
-  "by": "Raphael Lopes",
-  "alt": "Tokyo neon in rain",
-  "query": "neon sign shopfront night"
+  "query": "Nathan Road Hong Kong night neon",
+  "alt": "Nathan Road Hong Kong night neon"
  },
  "04-night-p2": {
-  "unsplash": "Gm_1cfBvW0I",
-  "by": "Unsplash",
-  "alt": "Narrow neon street",
-  "query": "night street rain reflections"
+  "query": "Akihabara night neon street",
+  "alt": "Akihabara night neon street"
  },
  "04-night-p3": {
-  "unsplash": "GZIk-Sq9PGg",
-  "by": "Unsplash",
-  "alt": "Neon lights in rain",
-  "query": "neon alley night"
+  "query": "Seoul Myeongdong night street lights",
+  "alt": "Seoul Myeongdong night street lights"
  },
  "05-memory-hero": {
-  "unsplash": "lvm42d3fsEw",
-  "by": "Unsplash",
-  "alt": "Abandoned brick building surrounded by nature",
-  "query": "abandoned building interior decay"
+  "query": "Beelitz Heilst\u00e4tten abandoned interior",
+  "alt": "Beelitz Heilst\u00e4tten abandoned interior"
  },
  "05-memory-s1": {
-  "unsplash": "mYVcAZvvuHI",
-  "by": "Unsplash",
-  "alt": "Abandoned building with dilapidated roof",
-  "query": "abandoned factory ruins overgrown"
+  "query": "Pripyat abandoned building interior",
+  "alt": "Pripyat abandoned building interior"
  },
  "05-memory-s2": {
-  "unsplash": "lvm42d3fsEw",
-  "by": "Unsplash",
-  "alt": "Overgrown brick ruin",
-  "query": "old ruined building facade"
+  "query": "Buzludzha monument interior",
+  "alt": "Buzludzha monument interior"
  },
  "05-memory-s3": {
-  "unsplash": "mYVcAZvvuHI",
-  "by": "Unsplash",
-  "alt": "Ruined roofline",
-  "query": "abandoned theatre interior"
+  "query": "Hashima island abandoned buildings",
+  "alt": "Hashima island abandoned buildings"
  },
  "05-memory-p1": {
-  "unsplash": "lvm42d3fsEw",
-  "by": "Unsplash",
-  "alt": "Brick ruin",
-  "query": "abandoned theatre interior"
+  "query": "abandoned theatre interior decay",
+  "alt": "abandoned theatre interior decay"
  },
  "05-memory-p2": {
-  "unsplash": "mYVcAZvvuHI",
-  "by": "Unsplash",
-  "alt": "Dilapidated roof",
-  "query": "urban ruins overgrown"
+  "query": "Kolmanskop abandoned house sand",
+  "alt": "Kolmanskop abandoned house sand"
  },
  "05-memory-p3": {
-  "unsplash": "yL_gqdHqMiw",
-  "by": "Amico Biswas",
-  "alt": "Sun over a city horizon",
-  "query": "derelict building windows"
+  "query": "abandoned factory hall overgrown",
+  "alt": "abandoned factory hall overgrown"
  },
  "06-horizon-hero": {
-  "unsplash": "a8dyRcs0VEU",
-  "by": "Liana S",
-  "alt": "Cars on a foggy highway at sunrise",
-  "query": "highway sunrise fog"
+  "query": "highway sunrise fog road",
+  "alt": "highway sunrise fog road"
  },
  "06-horizon-s1": {
-  "unsplash": "wnZFUkiY0Ac",
-  "by": "Eastman Childs",
-  "alt": "Sun setting over a highway",
-  "query": "road horizon sunset"
+  "query": "road horizon sunset straight highway",
+  "alt": "road horizon sunset straight highway"
  },
  "06-horizon-s2": {
-  "unsplash": "yL_gqdHqMiw",
-  "by": "Amico Biswas",
-  "alt": "Sun setting over a city",
-  "query": "city horizon sunrise skyline distant"
+  "query": "city skyline distant sunrise haze",
+  "alt": "city skyline distant sunrise haze"
  },
  "06-horizon-s3": {
-  "unsplash": "HXrOeotLCcg",
-  "by": "Sara Calado",
-  "alt": "Sunrise over a desert highway",
-  "query": "foggy highway morning"
+  "query": "Route 66 road horizon",
+  "alt": "Route 66 road horizon"
  },
  "06-horizon-p1": {
-  "unsplash": "a8dyRcs0VEU",
-  "by": "Liana S",
-  "alt": "Foggy highway",
-  "query": "foggy highway morning"
+  "query": "Bonneville salt flats road horizon",
+  "alt": "Bonneville salt flats road horizon"
  },
  "06-horizon-p2": {
-  "unsplash": "HXrOeotLCcg",
-  "by": "Sara Calado",
-  "alt": "Desert road",
-  "query": "desert road horizon sunrise"
+  "query": "Autobahn sunset motorway",
+  "alt": "Autobahn sunset motorway"
  },
  "06-horizon-p3": {
-  "unsplash": "wnZFUkiY0Ac",
-  "by": "Eastman Childs",
-  "alt": "Highway at dusk",
-  "query": "sunset highway silhouette"
+  "query": "desert road dawn horizon",
+  "alt": "desert road dawn horizon"
  }
 }

@@ -38,6 +38,12 @@ def good(b,ct):
     s=jpeg_size(b)
     return bool(s and s[0]>=MIN_W)
 
+def ok(p):
+    ii=p["imageinfo"][0]; md=ii.get("extmetadata",{})
+    lic=md.get("LicenseShortName",{}).get("value","")
+    w,h=ii.get("width",0),ii.get("height",0)
+    return ii.get("mime")=="image/jpeg" and w>=2000 and w>=h*1.15 and w<=h*2.6 and ("CC" in lic or "Public" in lic)
+
 def from_unsplash(pid,w=2400):
     try:
         b,ct,final=get(f"https://unsplash.com/photos/{pid}/download?force=true&w={w}")
@@ -45,29 +51,30 @@ def from_unsplash(pid,w=2400):
     except Exception as e: print("  unsplash fail",pid,e)
     return None,None
 
-def from_commons(query):
-    q=urllib.parse.quote(f"{query} filetype:bitmap")
+USED=set()
+TIERS=[' incategory:"Featured pictures on Wikimedia Commons"',' incategory:"Quality images"','']
+def commons_search(query,tier):
+    q=urllib.parse.quote(f"{query} filetype:bitmap{tier}")
     api=("https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch="+q+
-         "&gsrnamespace=6&gsrlimit=15&prop=imageinfo&iiprop=url|size|mime|extmetadata&iiurlwidth=2400&format=json")
-    try:
-        data=json.loads(get(api)[0])
-    except Exception as e:
-        print("  commons api fail",e); return None,None
-    pages=list((data.get("query",{}).get("pages") or {}).values())
-    pages=[p for p in pages if p.get("imageinfo")]
-    def ok(p):
-        ii=p["imageinfo"][0]; md=ii.get("extmetadata",{})
-        lic=md.get("LicenseShortName",{}).get("value","")
-        return ii.get("mime")=="image/jpeg" and ii.get("width",0)>=2000 and ii.get("width",0)>=ii.get("height",0) and ("CC" in lic or "Public" in lic)
-    pages=[p for p in pages if ok(p)]
-    pages.sort(key=lambda p:-p["imageinfo"][0]["width"])
+         "&gsrnamespace=6&gsrlimit=20&prop=imageinfo&iiprop=url|size|mime|extmetadata&iiurlwidth=2200&format=json")
+    try: data=json.loads(get(api)[0])
+    except Exception as e: print("  commons api fail",e); return []
+    return [p for p in (data.get("query",{}).get("pages") or {}).values() if p.get("imageinfo") and p["title"] not in USED]
+
+def from_commons(query):
+    pages=[]
+    for t in TIERS:
+        pages=commons_search(query,t)
+        pages=[p for p in pages if ok(p)]
+        if pages: print("  tier:",t or "any"); break
     for p in pages[:5]:
         ii=p["imageinfo"][0]; md=ii.get("extmetadata",{})
         try:
             b,ct,_=get(ii.get("thumburl") or ii["url"])
             if good(b,ct):
+                USED.add(p["title"])
                 artist=re.sub("<[^>]+>","",html.unescape(md.get("Artist",{}).get("value","Unknown"))).strip()[:60]
-                return b,{"source":"Wikimedia Commons","by":artist,"url":ii["descriptionurl"],"license":md.get("LicenseShortName",{}).get("value","")}
+                return b,{"source":"Wikimedia Commons","by":artist,"url":ii["descriptionurl"],"license":md.get("LicenseShortName",{}).get("value",""),"title":p["title"]}
         except Exception as e: print("  commons dl fail",e)
     return None,None
 
@@ -75,15 +82,20 @@ failed=[]
 for slot,spec in MAN.items():
     path=os.path.join(OUT,slot+".jpg")
     if os.path.exists(path) and slot in credits and not os.environ.get("REFRESH"):
-        print("skip",slot); continue
+        print("skip",slot); USED.add(credits[slot].get("title","")); continue
     print("fetch",slot)
     b,c=(None,None)
-    if spec.get("unsplash"): b,c=from_unsplash(spec["unsplash"])
-    if b and c: c["by"]=spec.get("by") or "Unsplash photographer"
-    if not b: b,c=from_commons(spec["query"])
+    b,c=from_commons(spec["query"])
     if not b:
         failed.append(slot); print("  FAILED",slot); continue
-    open(path,"wb").write(b); credits[slot]=c
+    try:
+        from PIL import Image
+        im=Image.open(io.BytesIO(b)).convert("RGB")
+        if im.width>2200: im=im.resize((2200,round(im.height*2200/im.width)),Image.LANCZOS)
+        im.save(path,"JPEG",quality=82,optimize=True,progressive=True)
+    except Exception as ex:
+        print("  resize skipped",ex); open(path,"wb").write(b)
+    credits[slot]=c
     print("  ok",slot,c["source"],jpeg_size(b),len(b)//1024,"KB")
 json.dump(credits,open(CRED_PATH,"w"),indent=1)
 print("failed:",failed)

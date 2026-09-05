@@ -42,7 +42,7 @@ def ok(p):
     ii=p["imageinfo"][0]; md=ii.get("extmetadata",{})
     lic=md.get("LicenseShortName",{}).get("value","")
     w,h=ii.get("width",0),ii.get("height",0)
-    return ii.get("mime")=="image/jpeg" and w>=2000 and w>=h*1.15 and w<=h*2.6 and ("CC" in lic or "Public" in lic)
+    return ii.get("mime")=="image/jpeg" and w>=2000 and w>=h*1.15 and w<=h*2.6 and "CC" in lic
 
 def from_unsplash(pid,w=2400):
     try:

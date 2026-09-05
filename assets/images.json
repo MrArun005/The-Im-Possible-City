@@ -8,12 +8,12 @@
   "alt": "Shanghai Pudong skyline dusk"
  },
  "01-skyline-s2": {
-  "query": "skyscraper glass facade looking up",
-  "alt": "skyscraper glass facade looking up"
+  "query": "Dubai Marina skyline night",
+  "alt": "Dubai Marina skyline night"
  },
  "01-skyline-s3": {
-  "query": "Dubai skyline fog aerial",
-  "alt": "Dubai skyline fog aerial"
+  "query": "Frankfurt skyline dusk",
+  "alt": "Frankfurt skyline dusk"
  },
  "01-skyline-p1": {
   "query": "Chicago skyline night aerial",
@@ -40,28 +40,28 @@
   "alt": "Hanoi street motorbikes traffic"
  },
  "02-streets-s3": {
-  "query": "Istanbul Istiklal street crowd",
-  "alt": "Istanbul Istiklal street crowd"
+  "query": "Nanjing Road Shanghai pedestrian night",
+  "alt": "Nanjing Road Shanghai pedestrian night"
  },
  "02-streets-p1": {
-  "query": "Oxford Street London crowd",
-  "alt": "Oxford Street London crowd"
+  "query": "Shibuya scramble crossing pedestrians",
+  "alt": "Shibuya scramble crossing pedestrians"
  },
  "02-streets-p2": {
   "query": "Bangkok Yaowarat Chinatown night street",
   "alt": "Bangkok Yaowarat Chinatown night street"
  },
  "02-streets-p3": {
-  "query": "Mumbai crowded street market",
-  "alt": "Mumbai crowded street market"
+  "query": "Chandni Chowk Delhi street crowd",
+  "alt": "Chandni Chowk Delhi street crowd"
  },
  "03-underground-hero": {
   "query": "Stockholm metro station T-Centralen",
   "alt": "Stockholm metro station T-Centralen"
  },
  "03-underground-s1": {
-  "query": "London Underground tunnel train motion",
-  "alt": "London Underground tunnel train motion"
+  "query": "London Underground train platform long exposure",
+  "alt": "London Underground train platform long exposure"
  },
  "03-underground-s2": {
   "query": "Moscow Metro station Komsomolskaya",
@@ -76,8 +76,8 @@
   "alt": "London Underground escalator"
  },
  "03-underground-p2": {
-  "query": "Naples metro Toledo station",
-  "alt": "Naples metro Toledo station"
+  "query": "Formosa Boulevard station Dome of Light",
+  "alt": "Formosa Boulevard station Dome of Light"
  },
  "03-underground-p3": {
   "query": "Munich U-Bahn Westfriedhof station",
@@ -96,8 +96,8 @@
   "alt": "Dotonbori Osaka night neon"
  },
  "04-night-s3": {
-  "query": "rainy street night reflections neon lights",
-  "alt": "rainy street night reflections neon lights"
+  "query": "Shinjuku Golden Gai night lanterns",
+  "alt": "Shinjuku Golden Gai night lanterns"
  },
  "04-night-p1": {
   "query": "Nathan Road Hong Kong night neon",
@@ -120,36 +120,36 @@
   "alt": "Pripyat abandoned building interior"
  },
  "05-memory-s2": {
-  "query": "Buzludzha monument interior",
-  "alt": "Buzludzha monument interior"
+  "query": "Buzludzha monument exterior",
+  "alt": "Buzludzha monument exterior"
  },
  "05-memory-s3": {
   "query": "Hashima island abandoned buildings",
   "alt": "Hashima island abandoned buildings"
  },
  "05-memory-p1": {
-  "query": "abandoned theatre interior decay",
-  "alt": "abandoned theatre interior decay"
+  "query": "Beelitz Heilst\u00e4tten",
+  "alt": "Beelitz Heilst\u00e4tten"
  },
  "05-memory-p2": {
-  "query": "Kolmanskop abandoned house sand",
-  "alt": "Kolmanskop abandoned house sand"
+  "query": "Kolmanskop Namibia abandoned",
+  "alt": "Kolmanskop Namibia abandoned"
  },
  "05-memory-p3": {
-  "query": "abandoned factory hall overgrown",
-  "alt": "abandoned factory hall overgrown"
+  "query": "Pripyat ferris wheel amusement park",
+  "alt": "Pripyat ferris wheel amusement park"
  },
  "06-horizon-hero": {
   "query": "highway sunrise fog road",
   "alt": "highway sunrise fog road"
  },
  "06-horizon-s1": {
-  "query": "road horizon sunset straight highway",
-  "alt": "road horizon sunset straight highway"
+  "query": "straight road horizon Iceland",
+  "alt": "straight road horizon Iceland"
  },
  "06-horizon-s2": {
-  "query": "city skyline distant sunrise haze",
-  "alt": "city skyline distant sunrise haze"
+  "query": "Frankfurt skyline sunrise fog",
+  "alt": "Frankfurt skyline sunrise fog"
  },
  "06-horizon-s3": {
   "query": "Route 66 road horizon",
@@ -164,7 +164,7 @@
   "alt": "Autobahn sunset motorway"
  },
  "06-horizon-p3": {
-  "query": "desert road dawn horizon",
-  "alt": "desert road dawn horizon"
+  "query": "Death Valley road horizon",
+  "alt": "Death Valley road horizon"
  }
 }

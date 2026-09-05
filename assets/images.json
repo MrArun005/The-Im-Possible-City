@@ -1,0 +1,170 @@
+{
+ "01-skyline-hero": {
+  "query": "Hong Kong skyline Victoria Harbour night",
+  "alt": "Hong Kong skyline Victoria Harbour night"
+ },
+ "01-skyline-s1": {
+  "query": "Shanghai Pudong skyline dusk",
+  "alt": "Shanghai Pudong skyline dusk"
+ },
+ "01-skyline-s2": {
+  "query": "Dubai Marina skyline night",
+  "alt": "Dubai Marina skyline night"
+ },
+ "01-skyline-s3": {
+  "query": "Frankfurt skyline dusk",
+  "alt": "Frankfurt skyline dusk"
+ },
+ "01-skyline-p1": {
+  "query": "Chicago skyline night aerial",
+  "alt": "Chicago skyline night aerial"
+ },
+ "01-skyline-p2": {
+  "query": "Manhattan skyline dusk",
+  "alt": "Manhattan skyline dusk"
+ },
+ "01-skyline-p3": {
+  "query": "Singapore skyline Marina Bay night",
+  "alt": "Singapore skyline Marina Bay night"
+ },
+ "02-streets-hero": {
+  "query": "Shibuya crossing crowd night",
+  "alt": "Shibuya crossing crowd night"
+ },
+ "02-streets-s1": {
+  "query": "Times Square crowd night",
+  "alt": "Times Square crowd night"
+ },
+ "02-streets-s2": {
+  "query": "Hanoi street motorbikes traffic",
+  "alt": "Hanoi street motorbikes traffic"
+ },
+ "02-streets-s3": {
+  "query": "Nanjing Road Shanghai pedestrian night",
+  "alt": "Nanjing Road Shanghai pedestrian night"
+ },
+ "02-streets-p1": {
+  "query": "Shibuya scramble crossing pedestrians",
+  "alt": "Shibuya scramble crossing pedestrians"
+ },
+ "02-streets-p2": {
+  "query": "Bangkok Yaowarat Chinatown night street",
+  "alt": "Bangkok Yaowarat Chinatown night street"
+ },
+ "02-streets-p3": {
+  "query": "Old Delhi street crowd",
+  "alt": "Old Delhi street crowd"
+ },
+ "03-underground-hero": {
+  "query": "Stockholm metro station T-Centralen",
+  "alt": "Stockholm metro station T-Centralen"
+ },
+ "03-underground-s1": {
+  "query": "London Underground train platform long exposure",
+  "alt": "London Underground train platform long exposure"
+ },
+ "03-underground-s2": {
+  "query": "Moscow Metro station Komsomolskaya",
+  "alt": "Moscow Metro station Komsomolskaya"
+ },
+ "03-underground-s3": {
+  "query": "Berlin U-Bahn station platform",
+  "alt": "Berlin U-Bahn station platform"
+ },
+ "03-underground-p1": {
+  "query": "London Underground escalator",
+  "alt": "London Underground escalator"
+ },
+ "03-underground-p2": {
+  "query": "Formosa Boulevard station Dome of Light",
+  "alt": "Formosa Boulevard station Dome of Light"
+ },
+ "03-underground-p3": {
+  "query": "Munich U-Bahn Westfriedhof station",
+  "alt": "Munich U-Bahn Westfriedhof station"
+ },
+ "04-night-hero": {
+  "query": "Kabukicho Shinjuku neon night",
+  "alt": "Kabukicho Shinjuku neon night"
+ },
+ "04-night-s1": {
+  "query": "Hong Kong neon signs street night",
+  "alt": "Hong Kong neon signs street night"
+ },
+ "04-night-s2": {
+  "query": "Dotonbori Osaka night neon",
+  "alt": "Dotonbori Osaka night neon"
+ },
+ "04-night-s3": {
+  "query": "Shinjuku night street neon",
+  "alt": "Shinjuku night street neon"
+ },
+ "04-night-p1": {
+  "query": "Nathan Road Hong Kong night neon",
+  "alt": "Nathan Road Hong Kong night neon"
+ },
+ "04-night-p2": {
+  "query": "Akihabara night neon street",
+  "alt": "Akihabara night neon street"
+ },
+ "04-night-p3": {
+  "query": "Seoul Myeongdong night street lights",
+  "alt": "Seoul Myeongdong night street lights"
+ },
+ "05-memory-hero": {
+  "query": "Beelitz Heilst\u00e4tten abandoned interior",
+  "alt": "Beelitz Heilst\u00e4tten abandoned interior"
+ },
+ "05-memory-s1": {
+  "query": "Pripyat abandoned building interior",
+  "alt": "Pripyat abandoned building interior"
+ },
+ "05-memory-s2": {
+  "query": "Buzludzha",
+  "alt": "Buzludzha"
+ },
+ "05-memory-s3": {
+  "query": "Hashima island abandoned buildings",
+  "alt": "Hashima island abandoned buildings"
+ },
+ "05-memory-p1": {
+  "query": "Beelitz-Heilst\u00e4tten interior",
+  "alt": "Beelitz-Heilst\u00e4tten interior"
+ },
+ "05-memory-p2": {
+  "query": "Kolmanskop Namibia abandoned",
+  "alt": "Kolmanskop Namibia abandoned"
+ },
+ "05-memory-p3": {
+  "query": "Pripyat ferris wheel amusement park",
+  "alt": "Pripyat ferris wheel amusement park"
+ },
+ "06-horizon-hero": {
+  "query": "highway sunrise fog road",
+  "alt": "highway sunrise fog road"
+ },
+ "06-horizon-s1": {
+  "query": "U.S. Route 50 Nevada desert highway",
+  "alt": "US Route 50 across the Nevada desert"
+ },
+ "06-horizon-s2": {
+  "query": "Frankfurt skyline fog",
+  "alt": "Frankfurt skyline fog"
+ },
+ "06-horizon-s3": {
+  "query": "Route 66 road horizon",
+  "alt": "Route 66 road horizon"
+ },
+ "06-horizon-p1": {
+  "query": "Bonneville salt flats road horizon",
+  "alt": "Bonneville salt flats road horizon"
+ },
+ "06-horizon-p2": {
+  "query": "Autobahn sunset motorway",
+  "alt": "Autobahn sunset motorway"
+ },
+ "06-horizon-p3": {
+  "query": "Death Valley Badwater Road",
+  "alt": "Death Valley Badwater Road"
+ }
+}
